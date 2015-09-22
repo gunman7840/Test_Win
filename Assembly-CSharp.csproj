@@ -52,8 +52,10 @@
      <Compile Include="Assets\Scripts\Debug\DrawDelayLine.cs" />
      <Compile Include="Assets\Scripts\Debug\WhiteSquareObj.cs" />
      <Compile Include="Assets\Scripts\FixedPlatform.cs" />
-     <Compile Include="Assets\Scripts\GameManager.cs" />
      <Compile Include="Assets\Scripts\Loader.cs" />
+     <Compile Include="Assets\Scripts\Managers\EnemyManager.cs" />
+     <Compile Include="Assets\Scripts\Managers\EventManager.cs" />
+     <Compile Include="Assets\Scripts\Managers\GameManager.cs" />
      <Compile Include="Assets\Scripts\Navigation.cs" />
      <Compile Include="Assets\Scripts\Path.cs" />
      <Compile Include="Assets\Scripts\Platform.cs" />

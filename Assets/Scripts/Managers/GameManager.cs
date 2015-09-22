@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour {
         DontDestroyOnLoad(gameObject);
         boardScript = GetComponent<BackGround>();
         InitGame();
+         
 
 
     }
@@ -29,9 +30,6 @@ public class GameManager : MonoBehaviour {
         //GameObject robot = Instantiate(Robot, new Vector3(-13f, -5f, 0f), Quaternion.identity) as GameObject;
        
     }
-
-
-
 
    
 }

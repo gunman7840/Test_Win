@@ -27,8 +27,9 @@ public class Player : MonoBehaviour {
     private int LinerForce = 20;
     private float JumpVel_min = 6f;
     private float JumpVel_max = 10f;
-   
+
     //----Расчет траектории 
+    public Navigation navigation;
     public Vector2 TargetPoint = new Vector2(0, 0);  
     public Path Trajectory;
     public Vector2 NextTarget;
@@ -36,17 +37,20 @@ public class Player : MonoBehaviour {
     public float RouteTimer = 0f;
     public float StuckTimer = 0f;
 
+    //------События 
+    public EventManager eventmanager;
+
     //-----Debug 
     DebugManager debugmanager; 
 
 	void Start () 
     {    
         rb=GetComponent<Rigidbody2D>();
-        debugmanager = GameObject.Find("DebugManager").GetComponent<DebugManager>(); 
-
+        debugmanager = GameObject.Find("DebugManager").GetComponent<DebugManager>();
+        eventmanager = GameObject.Find("Main Camera").GetComponent<EventManager>();
 
         //Получаем первую траекторию
-        var  navigation= GameObject.Find("path").GetComponent<Navigation>(); //Получаем доступ к классу
+        navigation = GameObject.Find("path").GetComponent<Navigation>(); //Получаем доступ к классу
         NextTarget = navigation.GetStartPoint();
         Trajectory = navigation.GetPath(NextTarget);
 	}
@@ -124,9 +128,14 @@ public class Player : MonoBehaviour {
         //Переключаемся на след целевую точку
         if (Mathf.Abs(transform.position.x - NextTarget.x) < 1 && Mathf.Abs(transform.position.y - NextTarget.y) < 1)
         {
+            if (NextTarget == (Vector2)navigation.target.transform.position)
+            {
+                eventmanager.TargetReached(gameObject);
+            }
             int i = 0;
             foreach (Vector2 item in Trajectory.PointsList)
             {
+
                 if (item == NextTarget)
                 {
                     NextTarget = Trajectory.PointsList[i - 1];
