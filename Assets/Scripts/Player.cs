@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 public class Player : MonoBehaviour {
 
-    //----Состояние объекта
+    //----Состояние объекта  1
     public Transform g0, gLeft, gRight, bleft0, bleft1, bright0, bright1,leftCast,rightCast;
     private Rigidbody2D rb;
     private Vector2 vel;
