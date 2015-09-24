@@ -6,6 +6,8 @@ using System.Collections.Generic;
 
 public class Player : MonoBehaviour {
 
+    static System.Random random = new System.Random();
+
     //----Состояние объекта  2
     public Transform g0, gLeft, gRight, bleft0, bleft1, bright0, bright1,leftCast,rightCast;
     private Rigidbody2D rb;
@@ -15,6 +17,10 @@ public class Player : MonoBehaviour {
     private bool isOnMovingBody = false;
     private Vector2 MovingBodySpeed;
     private Vector2 RelativeVel;
+    private bool afterstart = true;
+    private float pos0; //Используем для случаев когда объект застрял 
+    private float pos1;
+
     //Vector2 _myposition;
 
     //---------Прыжки
@@ -35,7 +41,7 @@ public class Player : MonoBehaviour {
     public Vector2 NextTarget;
     public float NextTarget_angle;
     public float RouteTimer = 0f;
-    public float StuckTimer = 0f;
+    public float StuckTimer = 100f;
 
     //------События 
     public EventManager eventmanager;
@@ -53,7 +59,10 @@ public class Player : MonoBehaviour {
         navigation = GameObject.Find("path").GetComponent<Navigation>(); //Получаем доступ к классу
         NextTarget = navigation.GetStartPoint();
         Trajectory = navigation.GetPath(NextTarget);
-	}
+
+        pos0 = transform.position.x;
+        StartCoroutine (StuckCoroutine());
+    }
 
 	void Update () {
         //Debug.Log("Update ");
@@ -69,41 +78,30 @@ public class Player : MonoBehaviour {
         {
             //Приходится назначать скорость прямо отсюда. Если сделать это из метода Jump, то при следующем же апдейте скорость изменяется непредсказуемо
             rb.velocity = new Vector2(JumpV0 * Mathf.Cos(JumpAngle), JumpV0 * Mathf.Sin(JumpAngle));
-            Debug.Log("Jump from update " + rb.velocity);
+            //Debug.Log("Jump from update " + rb.velocity);
             JumpAngle = 0f;
             JumpV0 = 0f;
         }
 
+        ProblemsDetector();
         Balance();
         Raycasting();
-        TrajectoryDirecting();
-
-        RouteTimer+=1/30f;
-        //if (vel.x < 1)
-          //  StuckTimer += 1/30; //
-
-
+        //TrajectoryDirecting();
         
-        if (ProblemsDetector() == true)
-        {
-            //Debug.Log("PROBLEMS ---");
-            var navigation = GameObject.Find("path").GetComponent<Navigation>();
-            
-            Vector2 newpoint = navigation.GetTarget(transform.position,Trajectory, NextTarget);
-            NextTarget = newpoint;
-            Trajectory = navigation.GetPath(NextTarget);
-            RouteTimer = 0f;
-        }
-        
+
+        //
+
+        //Debug.Log("Stuck timer " + StuckTimer);
+       
         //---------------------------------------------------Ручное управление
-        /*
+        
         int horizontal = 0;
         int vertical = 0;
         horizontal = (int)(Input.GetAxisRaw("Horizontal"));
         vertical = (int)(Input.GetAxisRaw("Vertical"));
 
 
-        if (horizontal == 1) // && isOnGround == true)
+        if (horizontal == 1  && isOnGround == true)
         {
             MoveForward(1);
         }
@@ -119,8 +117,76 @@ public class Player : MonoBehaviour {
             CalculateAngle(new Vector2(35.3f, 17f), 1);
            
         }
-         */
+         
         //---------------------------------------------------Ручное управление
+    }
+
+    IEnumerator StuckCoroutine()
+    {
+
+        while (true)
+        {
+            if (!afterstart)
+            {
+                Debug.Log("run cor");
+
+                pos1 = transform.position.x;
+                float dif = Mathf.Abs(pos1 - pos0);
+                Debug.Log("pos0 " + pos0);
+                Debug.Log("pos1 " + pos1);
+                Debug.Log("Diff " + dif);
+                if (dif < 1)
+                {
+                    Debug.Log("---------------------------------------------------STUCK-----------------------------------------------");
+                    //transform.Translate(new Vector2(rb.position.x,rb.position.y+1));
+                    JumpAngle = random.Next(80, 100);
+                    JumpV0 = 15f; //Иногда он так крепко застревает что прыжок не срабатывает, нужно учесть такие случае и применять прыжок в каждом апдейте пока он не выпрыгнет
+                }
+                pos0 = transform.position.x;
+                yield return new WaitForSeconds(3f);
+            }
+            else
+            {
+                afterstart = false;
+                yield return new WaitForSeconds(5f);
+            }
+        }    
+    }
+
+    void ProblemsDetector()
+    {
+
+        /*
+       if (Mathf.Abs(rb.velocity.x) < 5f)
+           StuckTimer += 1 / 30f;
+       else
+           StuckTimer = 0f;
+
+       if (StuckTimer > 3)
+       {
+           Debug.Log("STUCK-----------------------------------------------");
+           JumpAngle = random.Next(80, 100);
+           Debug.Log("RANDOM " + JumpAngle);
+           //JumpAngle = 90f;
+           JumpV0 = 15f;
+           StuckTimer = 0f;
+       }
+
+       */
+
+        RouteTimer += 1 / 30f;
+       
+        if (RouteTimer > 15)
+        {
+            //Debug.Log("PROBLEMS ---");
+            var navigation = GameObject.Find("path").GetComponent<Navigation>();
+
+            Vector2 newpoint = navigation.GetTarget(transform.position, Trajectory, NextTarget);
+            NextTarget = newpoint;
+            Trajectory = navigation.GetPath(NextTarget);
+            RouteTimer = 0f;
+        }
+            
     }
 
     void TrajectoryDirecting()
@@ -180,14 +246,6 @@ public class Player : MonoBehaviour {
             MoveForward(3);
         }
 
-    }
-
-    bool ProblemsDetector()
-    {
-        if (RouteTimer > 15)
-            return true;
-        else
-            return false;
     }
 
     void Raycasting()
@@ -346,7 +404,9 @@ public class Player : MonoBehaviour {
         {
             if (preScanHollow(scanpoint, direction) == false) //Проверяем рельеф прямо перед собой
             {
+                Debug.Log("Point to jump 1 "+ PointToJump);
                 PointToJump = ScanJump(scanpoint, direction);  //Сначала пытаемся прыгнуть ( на тот случай если сразу после впадины идет отвесный склон) и если не получается, тогда уже сканируем впадину и пытаемся спрыгнуть в нее
+                Debug.Log("Point to jump 2 " + PointToJump);
                 if (PointToJump.x == -3 && PointToJump.y == -3)
                 {
                     PointToJump = ScanHollow(scanpoint, direction);
@@ -370,9 +430,8 @@ public class Player : MonoBehaviour {
 
     bool preScanHollow(Vector2 scanpoint, int direction)
     {
-
+        Debug.Log("preScanHollow");
         bool _freeway = false;
-        //Debug.Log("preScanHollow");
         RaycastHit2D hit_hollow = Physics2D.Raycast(scanpoint, new Vector2(direction, 0));
             //Debug.DrawLine(scanpoint, hit_hollow.point, Color.white);
        
@@ -394,7 +453,7 @@ public class Player : MonoBehaviour {
 
     Vector2 ScanHollow(Vector2 scanpoint, int direction)
     {
-        //Debug.Log("ScanHollow");
+        Debug.Log("ScanHollow");
         Vector2 HollowEdge=new Vector2(-3,-3);
 
             RaycastHit2D hit_hollow = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y + 2), new Vector2(direction, 0));
@@ -429,22 +488,20 @@ public class Player : MonoBehaviour {
 
     Vector2 ScanJump(Vector2 scanpoint, int direction)
     {
-        //Debug.Log("ScanJump");
+        Debug.Log("ScanJump");
         Vector2 HillEdge = new Vector2(-3, -3);
-        RaycastHit2D hit_jump = Physics2D.Raycast(new Vector2(transform.position.x,transform.position.y+2), new Vector2(0, 1));
 
-        RaycastHit2D hit_jump0 = Physics2D.Raycast(new Vector2(transform.position.x + direction, transform.position.y), new Vector2(direction, 0));
-
-        for (float i = 1f; i < (hit_jump.point.y - transform.position.y); i = i + 1f)
+        RaycastHit2D hit_jump0 = Physics2D.Raycast(new Vector2(transform.position.x + direction, transform.position.y+2), new Vector2(direction, 0));
+        for (float i = 3f; i < 10; i = i + 1f)
         {
             RaycastHit2D hit_jump1 = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y + i), new Vector2(direction, 0));
-            //Debug.DrawLine(new Vector2(transform.position.x, hit_jump0.point.y), hit_jump0.point, Color.white);
-            //Debug.DrawLine(new Vector2(transform.position.x, hit_jump1.point.y), hit_jump1.point, Color.white);
-            
+
+            debugmanager.DrawDebugLine(new Vector2(transform.position.x, hit_jump0.point.y), hit_jump0.point, Color.white);
+            debugmanager.DrawDebugLine(new Vector2(transform.position.x, hit_jump1.point.y), hit_jump1.point, Color.white);
+
             if (((hit_jump1.point.x - hit_jump0.point.x) * direction > 1) && Mathf.Abs(transform.position.x - hit_jump0.point.x) < 10) //Проверям что площадка достаточно широкая, что на нее можно запругнуть, проверям что HillEdge не слишком далеко
             {
-                
-                Debug.DrawLine(new Vector2(transform.position.x, hit_jump1.point.y), hit_jump1.point, Color.red);
+                debugmanager.DrawDebugLine(new Vector2(transform.position.x, hit_jump1.point.y + 0.5f), new Vector2(hit_jump0.point.x + 0.5f * direction, hit_jump1.point.y + 0.5f), Color.red);
                 HillEdge = new Vector2(hit_jump0.point.x + 0.5f * direction, hit_jump1.point.y + 0.5f );
                 break;
             }
@@ -493,7 +550,7 @@ public class Player : MonoBehaviour {
         rb.velocity = new Vector2(0, 0); //Останавливаем тело
         rb.angularVelocity = 0;
         JumpAngle = _angle;
-        JumpV0 = FinalJumpVel; 
+        JumpV0 = FinalJumpVel;
     }
 
     void Balance()

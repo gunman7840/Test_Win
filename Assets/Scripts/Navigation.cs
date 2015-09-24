@@ -123,7 +123,7 @@ public class Navigation : MonoBehaviour {
 
     public Vector2 GetTarget(Vector2 _position,Path Trajectory, Vector2 _currentNextTarget)
     {
-        Debug.Log("------------------------------------------------------------------------Get target ");
+        //Debug.Log("------------------------------------------------------------------------Get target ");
      
          var debugmanager = GameObject.Find("DebugManager").GetComponent<DebugManager>(); 
 
@@ -144,7 +144,7 @@ public class Navigation : MonoBehaviour {
             {
                 _target = item.position;
                 debugmanager.DrawDebugLine(_position, item.position, Color.blue);
-                Debug.Log("Get POINT " + item.fails);
+                //Debug.Log("Get POINT " + item.fails);
                 break;
             }
         }

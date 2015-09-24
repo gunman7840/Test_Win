@@ -8,7 +8,7 @@ public class DebugManager : MonoBehaviour {
     private float gravity = 9.8f;
 
 
-	// Use this for initialization 11
+	// Use this for initialization 
 	void Start () {
 	
 	}

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-//11
+
 public class WhiteSquareObj : MonoBehaviour {
 
     void Start()
