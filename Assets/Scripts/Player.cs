@@ -24,6 +24,8 @@ public class Player : MonoBehaviour {
     //Vector2 _myposition;
 
     //---------Прыжки
+    private bool Jumpbool = false; //готовы ли мы прыгать
+    Vector2 PointToJump=new Vector2(-3,-3);
     private float JumpAngle =0f;
     private float JumpV0=0f;
 
@@ -83,7 +85,7 @@ public class Player : MonoBehaviour {
             JumpV0 = 0f;
         }
 
-        ProblemsDetector();
+        //ProblemsDetector();
         Balance();
         Raycasting();
         //TrajectoryDirecting();
@@ -381,6 +383,7 @@ public class Player : MonoBehaviour {
     void ScanLandscape(Vector2 scanpoint, int direction)
     {
         //Debug.Log("ScanLandscape");
+        Jumpbool = false;
         RaycastHit2D hit1 = Physics2D.Raycast(scanpoint, new Vector2(direction, -1));
         RaycastHit2D hit2 = Physics2D.Raycast(scanpoint, new Vector2(5f * direction, -2));
         RaycastHit2D hit3 = Physics2D.Raycast(scanpoint, new Vector2(5f * direction, -1));
@@ -398,50 +401,44 @@ public class Player : MonoBehaviour {
             angle2 = Mathf.PI + angle2;           
         }
         //---------------------------------------------------------------------------------------------------------------------
-        Vector2 PointToJump = new Vector2(-3, -3); //Структуру Vector2 необходимо инициализировать иначе будут ошибки компиляции
+        //Vector2 PointToJump = new Vector2(-3, -3); //Структуру Vector2 необходимо инициализировать иначе будут ошибки компиляции
 
         if (isOnGround == true && (Mathf.Abs(transform.position.y - hit1.point.y) > 2 || Mathf.Abs(transform.position.y - hit2.point.y) > 2))  //Если есть подозрение на яму
         {
             if (preScanHollow(scanpoint, direction) == false) //Проверяем рельеф прямо перед собой
             {
-                Debug.Log("Point to jump 1 "+ PointToJump);
-                PointToJump = ScanJump(scanpoint, direction);  //Сначала пытаемся прыгнуть ( на тот случай если сразу после впадины идет отвесный склон) и если не получается, тогда уже сканируем впадину и пытаемся спрыгнуть в нее
-                Debug.Log("Point to jump 2 " + PointToJump);
-                if (PointToJump.x == -3 && PointToJump.y == -3)
-                {
-                    PointToJump = ScanHollow(scanpoint, direction);
-                }
+                Jumpbool = ScanJump(scanpoint, direction);  //Сначала пытаемся прыгнуть ( на тот случай если сразу после впадины идет отвесный склон) и если не получается, тогда уже сканируем впадину и пытаемся спрыгнуть в нее
+                if (Jumpbool)
+                    return; //значит мы уже прыгаем
+                Jumpbool = ScanHollow(scanpoint, direction);
+                if (Jumpbool)
+                    return; //значит мы уже прыгаем
             }
         }
         else if (isOnGround == true && (angle2 * Mathf.Rad2Deg > 50) && Mathf.Abs(transform.position.x - hit2.point.x)<2) //Если есть подозрение на возвышенность и она находится ближе 2 метров
         {
-            PointToJump=ScanJump(scanpoint, direction);
-        }
-
-        
-
-        if (PointToJump.x != -3 && PointToJump.y != -3) //Нужно прыгать
-        {
-            TargetPoint = PointToJump;
-            CalculateAngle(PointToJump, direction);
+            Jumpbool = ScanJump(scanpoint, direction);
+            if (Jumpbool)
+                return; //значит мы уже прыгаем
         }
 
     }
 
     bool preScanHollow(Vector2 scanpoint, int direction)
     {
-        Debug.Log("preScanHollow");
+        //Если после приемлемой впадины сразу идет возвышенность то мы попадаем в тупик. Но и прыгать сразу же на нее нет смыслка потому что заранее неизвестно что это тупик. Будем решулировать через точки ориентации
+        //Debug.Log("preScanHollow");  
         bool _freeway = false;
         RaycastHit2D hit_hollow = Physics2D.Raycast(scanpoint, new Vector2(direction, 0));
-            //Debug.DrawLine(scanpoint, hit_hollow.point, Color.white);
+            //debugmanager.DrawDebugLine(scanpoint, hit_hollow.point, Color.white);
        
             RaycastHit2D hit_depth0 = Physics2D.Raycast(new Vector2(transform.position.x +2f* direction, scanpoint.y), new Vector2(0, -1));
             for (float i = 3f; i < 6f; i = i + 1f)
             {
                 RaycastHit2D hit_depth1 = Physics2D.Raycast(new Vector2(transform.position.x + i * direction, scanpoint.y), new Vector2(0, -1));
-                Debug.DrawLine(new Vector2(hit_depth0.point.x, scanpoint.y), hit_depth0.point, Color.white);
-                Debug.DrawLine(new Vector2(hit_depth1.point.x, scanpoint.y), hit_depth1.point, Color.white);
-                if ((transform.position.y - hit_depth1.point.y < 4) && (transform.position.y - hit_depth0.point.y < 4)) //Если в процессе сканирования видно, что рельеф достаточно ровный, то выходим из функции и продолжаем движение вперед
+                //debugmanager.DrawDebugLine(new Vector2(hit_depth0.point.x, scanpoint.y), hit_depth0.point, Color.white);
+                //debugmanager.DrawDebugLine(new Vector2(hit_depth1.point.x, scanpoint.y), hit_depth1.point, Color.white);
+                if ((transform.position.y - hit_depth1.point.y < 4) && (transform.position.y - hit_depth0.point.y < 4)) //Если в процессе сканирования видно, что яма не глубокая, то выходим из функции и продолжаем движение вперед
                 {
                     //Debug.Log("landscape is acceptable");
                     _freeway = true;
@@ -451,21 +448,20 @@ public class Player : MonoBehaviour {
         return _freeway;
     }
 
-    Vector2 ScanHollow(Vector2 scanpoint, int direction)
+    bool ScanHollow(Vector2 scanpoint, int direction)
     {
-        Debug.Log("ScanHollow");
+        //Debug.Log("ScanHollow");
         Vector2 HollowEdge=new Vector2(-3,-3);
 
             RaycastHit2D hit_hollow = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y + 2), new Vector2(direction, 0));
-            //Debug.DrawLine(scanpoint, hit_hollow.point, Color.white);
+            debugmanager.DrawDebugLine(new Vector2(transform.position.x, transform.position.y + 2), hit_hollow.point, Color.white); 
        
-            RaycastHit2D hit_depth0 = Physics2D.Raycast(new Vector2(transform.position.x +3f* direction, scanpoint.y), new Vector2(0, -1));
+            RaycastHit2D hit_depth0 = Physics2D.Raycast(new Vector2(transform.position.x +3f* direction, transform.position.y + 2), new Vector2(0, -1));
             for (float i = 4.5f; i < Mathf.Abs(transform.position.x - hit_hollow.point.x); i = i + 1.5f)
             {
-            
-                RaycastHit2D hit_depth1 = Physics2D.Raycast(new Vector2(transform.position.x + i * direction, scanpoint.y), new Vector2(0, -1));
-                //Debug.DrawLine(new Vector2(hit_depth0.point.x, scanpoint.y), hit_depth0.point, Color.white);
-                //Debug.DrawLine(new Vector2(hit_depth1.point.x, scanpoint.y), hit_depth1.point, Color.white);
+                RaycastHit2D hit_depth1 = Physics2D.Raycast(new Vector2(transform.position.x + i * direction, transform.position.y + 2), new Vector2(0, -1));
+                debugmanager.DrawDebugLine(new Vector2(hit_depth0.point.x, transform.position.y + 2), hit_depth0.point, Color.white);
+                debugmanager.DrawDebugLine(new Vector2(hit_depth1.point.x, transform.position.y + 2), hit_depth1.point, Color.white);
                 if ((transform.position.y - hit_depth1.point.y < 4) && (hit_depth1.point.y - hit_depth0.point.y < 0.5)) //Если впадина не слишком глубока и есть ровный участок, то можно прыгать
                 {
                    //Debug.DrawLine(new Vector2(hit_depth0.point.x, scanpoint.y), hit_depth0.point, Color.red);
@@ -476,42 +472,50 @@ public class Player : MonoBehaviour {
                 hit_depth0 = hit_depth1;
             }
 
-            if (HollowEdge.x == -3 && HollowEdge.y == -3)
+        if (HollowEdge.x != -3) //Если мы нашли какую-то точку, то считаем угол
             {
-                //Debug.Log("Too deep hollow");
+                if (CalculateAngle(HollowEdge, direction)) //если CalculateAngle вернул true то прыжок возможен и будет выполнен в след апдейте, значения для прыжка обновлены. Выходим из всех функций через возврат true
+                    return true;
+                else
+                    return false; //в противном случае прыжок невозможен, возвращаем false
             }
-      
-
-
-        return HollowEdge;
+            else
+                return false; //точка не найдена, возвращаем false
     }
 
-    Vector2 ScanJump(Vector2 scanpoint, int direction)
+    bool ScanJump(Vector2 scanpoint, int direction)  //не работает нихера
     {
         Debug.Log("ScanJump");
         Vector2 HillEdge = new Vector2(-3, -3);
-
-        RaycastHit2D hit_jump0 = Physics2D.Raycast(new Vector2(transform.position.x + direction, transform.position.y+2), new Vector2(direction, 0));
-        for (float i = 3f; i < 10; i = i + 1f)
+        RaycastHit2D hit_jump0 = Physics2D.Raycast(new Vector2(transform.position.x + direction, transform.position.y+1), new Vector2(direction, 0));
+        for (float i = 2f; i < 10; i = i + 1f)
         {
             RaycastHit2D hit_jump1 = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y + i), new Vector2(direction, 0));
 
-            debugmanager.DrawDebugLine(new Vector2(transform.position.x, hit_jump0.point.y), hit_jump0.point, Color.white);
+            debugmanager.DrawDebugLine(new Vector2(transform.position.x, hit_jump0.point.y), hit_jump0.point, Color.green);
             debugmanager.DrawDebugLine(new Vector2(transform.position.x, hit_jump1.point.y), hit_jump1.point, Color.white);
 
             if (((hit_jump1.point.x - hit_jump0.point.x) * direction > 1) && Mathf.Abs(transform.position.x - hit_jump0.point.x) < 10) //Проверям что площадка достаточно широкая, что на нее можно запругнуть, проверям что HillEdge не слишком далеко
             {
-                debugmanager.DrawDebugLine(new Vector2(transform.position.x, hit_jump1.point.y + 0.5f), new Vector2(hit_jump0.point.x + 0.5f * direction, hit_jump1.point.y + 0.5f), Color.red);
+               debugmanager.DrawDebugLine(new Vector2(transform.position.x, hit_jump1.point.y + 0.5f), new Vector2(hit_jump0.point.x + 0.5f * direction, hit_jump1.point.y + 0.5f), Color.red);
                 HillEdge = new Vector2(hit_jump0.point.x + 0.5f * direction, hit_jump1.point.y + 0.5f );
                 break;
             }
             hit_jump0 = hit_jump1;
-
         }
-        return HillEdge;
+
+        if (HillEdge.x != -3) //Если мы нашли какую-то точку, то считаем угол
+        {
+            if (CalculateAngle(HillEdge, direction)) //если CalculateAngle вернул true то прыжок возможен и будет выполнен в след апдейте, значения для прыжка обновлены. Выходим из всех функций через возврат true
+                return true;
+            else
+                return false; //в противном случае прыжок невозможен, возвращаем false
+        }
+        else
+            return false; //точка не найдена, возвращаем false
     }
 
-    void CalculateAngle(Vector2 point, int direction)
+    bool CalculateAngle(Vector2 point, int direction)
     {
         Debug.Log("--------------------------------------------------------------------------CalculateAngle");
         Vector2 target = new Vector2(Mathf.Abs(transform.position.x - point.x), point.y); //Берем абсолютное значение по оси y, чтобы считать углы для точек которые находятся внизу
@@ -522,7 +526,7 @@ public class Player : MonoBehaviour {
             float tg1 = (Mathf.Pow(V0, 2) + Mathf.Sqrt(Mathf.Pow(V0, 4) - gravity * (gravity * Mathf.Pow(target.x, 2) + 2 * Mathf.Pow(V0, 2) * (target.y - transform.position.y)))) / (gravity * target.x);
             //float tg2 = (Mathf.Pow(V0, 2) - Mathf.Sqrt(Mathf.Pow(V0, 4) - gravity * (gravity * Mathf.Pow(target.x, 2) + 2 * Mathf.Pow(V0, 2) * target.y - transform.position.y))) / (gravity * target.x);
             _angle= Mathf.Atan(tg1);
-            if (_angle == _angle && _angle != 0)  //выьираем валидный угол с минимальной скоростью
+            if (_angle == _angle && _angle != 0)  //выбираем валидный угол с минимальной скоростью
             {
                 //Debug.Log("Accepted Jump vel " + V0);
                 FinalJumpVel = V0;
@@ -531,17 +535,17 @@ public class Player : MonoBehaviour {
         }
         
  
-        if (_angle != _angle || _angle==0)  //если угол не равен самому себе значит он неопределен (float.NaN), то точка недосягаема при исходной начальной скорости
+        if (_angle != _angle || _angle==0f)  //если угол не равен самому себе значит он неопределен (float.NaN), то точка недосягаема при исходной начальной скорости
         {
             Debug.Log("JUMP IMPOSSIBLE ");
-            return;
+            return false;
         }
         if (direction == -1)
         {
             _angle = Mathf.PI - _angle;
         }
-        
-        
+
+        TargetPoint = point; //рисуем линию до этой точки в методе scnlandscape
         //------------------------------debug
         debugmanager.DrawParabola(transform.position, FinalJumpVel, _angle);      
         //------------------------------
@@ -551,6 +555,8 @@ public class Player : MonoBehaviour {
         rb.angularVelocity = 0;
         JumpAngle = _angle;
         JumpV0 = FinalJumpVel;
+
+        return true;
     }
 
     void Balance()
