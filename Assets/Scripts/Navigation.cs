@@ -159,17 +159,4 @@ public class Navigation : MonoBehaviour {
         _trajectory.PathFails += 1;
     }
 
-	// Update is called once per frame
-	void Update () {
-    
-    	
-	}
-
-    void OnDrawGizmos()
-    {
-        //path1.DrawPath();
-        //path2.DrawPath();
-        //path3.DrawPath();
-    }
-
 }

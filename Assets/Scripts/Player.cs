@@ -85,10 +85,10 @@ public class Player : MonoBehaviour {
             JumpV0 = 0f;
         }
 
-        //ProblemsDetector();
+        ProblemsDetector();
         Balance();
         Raycasting();
-        //TrajectoryDirecting();
+        TrajectoryDirecting();
         
 
         //
@@ -96,7 +96,7 @@ public class Player : MonoBehaviour {
         //Debug.Log("Stuck timer " + StuckTimer);
        
         //---------------------------------------------------Ручное управление
-        
+        /*
         int horizontal = 0;
         int vertical = 0;
         horizontal = (int)(Input.GetAxisRaw("Horizontal"));
@@ -119,7 +119,7 @@ public class Player : MonoBehaviour {
             CalculateAngle(new Vector2(35.3f, 17f), 1);
            
         }
-         
+         */
         //---------------------------------------------------Ручное управление
     }
 
@@ -134,13 +134,10 @@ public class Player : MonoBehaviour {
 
                 pos1 = transform.position.x;
                 float dif = Mathf.Abs(pos1 - pos0);
-                Debug.Log("pos0 " + pos0);
-                Debug.Log("pos1 " + pos1);
-                Debug.Log("Diff " + dif);
+                //Debug.Log("pos0 " + pos0 + " pos1 " + pos1 + " Diff " + dif);
                 if (dif < 1)
                 {
                     Debug.Log("---------------------------------------------------STUCK-----------------------------------------------");
-                    //transform.Translate(new Vector2(rb.position.x,rb.position.y+1));
                     JumpAngle = random.Next(80, 100);
                     JumpV0 = 15f; //Иногда он так крепко застревает что прыжок не срабатывает, нужно учесть такие случае и применять прыжок в каждом апдейте пока он не выпрыгнет
                 }
@@ -157,27 +154,7 @@ public class Player : MonoBehaviour {
 
     void ProblemsDetector()
     {
-
-        /*
-       if (Mathf.Abs(rb.velocity.x) < 5f)
-           StuckTimer += 1 / 30f;
-       else
-           StuckTimer = 0f;
-
-       if (StuckTimer > 3)
-       {
-           Debug.Log("STUCK-----------------------------------------------");
-           JumpAngle = random.Next(80, 100);
-           Debug.Log("RANDOM " + JumpAngle);
-           //JumpAngle = 90f;
-           JumpV0 = 15f;
-           StuckTimer = 0f;
-       }
-
-       */
-
-        RouteTimer += 1 / 30f;
-       
+        RouteTimer += 1 / 30f;  
         if (RouteTimer > 15)
         {
             //Debug.Log("PROBLEMS ---");
@@ -196,6 +173,7 @@ public class Player : MonoBehaviour {
         //Переключаемся на след целевую точку
         if (Mathf.Abs(transform.position.x - NextTarget.x) < 1 && Mathf.Abs(transform.position.y - NextTarget.y) < 1)
         {
+            rb.velocity = new Vector2(0, 0); // останавливаемся
             if (NextTarget == (Vector2)navigation.target.transform.position)
             {
                 eventmanager.TargetReached(gameObject);
@@ -203,7 +181,6 @@ public class Player : MonoBehaviour {
             int i = 0;
             foreach (Vector2 item in Trajectory.PointsList)
             {
-
                 if (item == NextTarget)
                 {
                     NextTarget = Trajectory.PointsList[i - 1];
@@ -267,7 +244,8 @@ public class Player : MonoBehaviour {
         if (hit01 || hit02)
         {
             isOnGround = true;
-            
+             
+            // Смотрим не касаемся ли мы движущегося кинематик тела. Пока откладываем этот функционал
             if (hit01.rigidbody != null && hit02.rigidbody != null)  //Нужен этот if , потому что у земли не определяется rigidbody и сыпятся ошибки
             {
                 if (hit01.rigidbody.tag == "MovingBody" || hit02.rigidbody.tag == "MovingBody")
@@ -278,7 +256,7 @@ public class Player : MonoBehaviour {
                 else
                     isOnMovingBody = false;
             }
-             
+            
         }
         else
             isOnGround = false;
