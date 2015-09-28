@@ -5,70 +5,25 @@ using System.Linq;
 
 public class Navigation : MonoBehaviour {
 
-	//  
-    public GameObject target;
-    public GameObject point_1;
-    public GameObject point_2;
-    public GameObject point_3;
-    public GameObject point_4;
-    public GameObject point_5;
-    public GameObject point_6;
-    public GameObject point_7;
-    
-    public class TargetPoint
-    {
-        public Vector2 position;
-        public float distance;
-        public int fails;
-    }
+    protected Level1 LevelData;
 
-    List<TargetPoint> TP_Array = new List<TargetPoint>(); //Лист содержащий все точки всех траекторий
-
-
-    public List<Path> PathList = new List<Path>(); //Лист содержащий все пути
-    public Path path1;
-    public Path path2;
-    public Path path3;
-
+    protected List<TargetPoint> TP_Array = new List<TargetPoint>(); //Лист содержащий все точки всех траекторий
+    protected List<Path> PathList = new List<Path>(); //Лист содержащий все пути
     static System.Random random = new System.Random();
 
     void Awake() {
 
         // awake чтобы инициализировать траектории были готовы к моменту старта Player
-
-        //Создаем объекты траекторий и наполняем их точками
-        Vector2[] _pointsarray_1 = { target.transform.position, point_1.transform.position, point_4.transform.position, point_7.transform.position };
-        List<Vector2> _pointslist_1= new List<Vector2>(_pointsarray_1);
-        path1 = new Path("Path1", _pointslist_1, 15);
-
-        Vector2[] _pointsarray_2 = { target.transform.position, point_1.transform.position, point_3.transform.position, point_5.transform.position, point_6.transform.position, point_7.transform.position };
-        List<Vector2> _pointslist_2 = new List<Vector2>(_pointsarray_2);
-        path2 = new Path("Path2", _pointslist_2, 10);
-
-        Vector2[] _pointsarray_3 = { target.transform.position, point_2.transform.position, point_3.transform.position, point_5.transform.position, point_6.transform.position, point_7.transform.position };
-        List<Vector2> _pointslist_3 = new List<Vector2>(_pointsarray_3);
-        path3 = new Path("Path3", _pointslist_3, 7);
-
-        PathList.Add(path1);
-        PathList.Add(path2);
-        PathList.Add(path3);
-
-        //заполняем лист TP_Array
-        Vector2[] _points_temp_array={ target.transform.position, point_1.transform.position, point_2.transform.position, point_3.transform.position , point_4.transform.position , point_5.transform.position , point_6.transform.position , point_7.transform.position };
-        foreach(Vector2 temppoint in _points_temp_array)
-        {
-            TargetPoint _point = new TargetPoint();
-            _point.position = temppoint;
-            _point.fails = 0;
-            TP_Array.Add(_point);
-        }
+        LevelData = GameObject.Find("path").GetComponent<Level1>(); //Получаем доступ к классу
+        PathList = LevelData.GetPathList();
+        TP_Array= LevelData.Get_tp_Array();
 
     }
 
     //------------------------------------------------------------------------------test
     public Vector2 GetStartPoint()
     {
-        return point_7.transform.position ;
+        return LevelData._getStartPoint();
     }    
     //------------------------------------------------------------------------------test
 
@@ -101,7 +56,6 @@ public class Navigation : MonoBehaviour {
             if (item.PointsList.Contains(CurrentPoint))
             {          
                 float _priority=((float)item.PathPriority - (float)item.PathFails) / SUMPriority;
-                //Debug.Log("---------------------------Path actual priority " + item.PathName + " " + _priority);
                 Available_PathList.Add(item, _priority);
             }
         }
@@ -123,7 +77,7 @@ public class Navigation : MonoBehaviour {
 
     public Vector2 GetTarget(Vector2 _position,Path Trajectory, Vector2 _currentNextTarget)
     {
-        //Debug.Log("------------------------------------------------------------------------Get target ");
+        Debug.Log("------------------------------------------------------------------------Get target ");
      
          var debugmanager = GameObject.Find("DebugManager").GetComponent<DebugManager>(); 
 
@@ -157,6 +111,11 @@ public class Navigation : MonoBehaviour {
         TargetPoint tp = TP_Array.Find(x => x.position==_point); //в массиве находим таргет поинт по условию
         tp.fails += 1;
         _trajectory.PathFails += 1;
+    }
+
+    public Vector2 GetFinalTarget()
+    {
+        return LevelData.target.transform.position;
     }
 
 }

@@ -58,7 +58,7 @@ public class Player : MonoBehaviour {
         eventmanager = GameObject.Find("Main Camera").GetComponent<EventManager>();
 
         //Получаем первую траекторию
-        navigation = GameObject.Find("path").GetComponent<Navigation>(); //Получаем доступ к классу
+        navigation = GameObject.Find("Main Camera").GetComponent<Navigation>(); //Получаем доступ к классу
         NextTarget = navigation.GetStartPoint();
         Trajectory = navigation.GetPath(NextTarget);
 
@@ -155,11 +155,9 @@ public class Player : MonoBehaviour {
     void ProblemsDetector()
     {
         RouteTimer += 1 / 30f;  
-        if (RouteTimer > 15)
+        if (RouteTimer > 10)
         {
             //Debug.Log("PROBLEMS ---");
-            var navigation = GameObject.Find("path").GetComponent<Navigation>();
-
             Vector2 newpoint = navigation.GetTarget(transform.position, Trajectory, NextTarget);
             NextTarget = newpoint;
             Trajectory = navigation.GetPath(NextTarget);
@@ -174,7 +172,7 @@ public class Player : MonoBehaviour {
         if (Mathf.Abs(transform.position.x - NextTarget.x) < 1 && Mathf.Abs(transform.position.y - NextTarget.y) < 1)
         {
             rb.velocity = new Vector2(0, 0); // останавливаемся
-            if (NextTarget == (Vector2)navigation.target.transform.position)
+            if (NextTarget == navigation.GetFinalTarget())
             {
                 eventmanager.TargetReached(gameObject);
             }
