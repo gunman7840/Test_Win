@@ -54,6 +54,7 @@
     <Compile Include="Assets\Scripts\Debug\WhiteSquareObj.cs" />
     <Compile Include="Assets\Scripts\FixedPlatform.cs" />
     <Compile Include="Assets\Scripts\Levels\Level1.cs" />
+    <Compile Include="Assets\Scripts\Levels\Level2.cs" />
     <Compile Include="Assets\Scripts\Loader.cs" />
     <Compile Include="Assets\Scripts\Managers\EnemyManager.cs" />
     <Compile Include="Assets\Scripts\Managers\EventManager.cs" />
@@ -63,6 +64,8 @@
     <Compile Include="Assets\Scripts\Navigation\TargetPoint.cs" />
     <Compile Include="Assets\Scripts\Platform.cs" />
     <Compile Include="Assets\Scripts\Player.cs" />
+    <Compile Include="Assets\Scripts\Weapons\Bow\Arrow.cs" />
+    <Compile Include="Assets\Scripts\Weapons\Bow\Bow.cs" />
     <Reference Include="UnityEngine.UI">
       <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
     </Reference>

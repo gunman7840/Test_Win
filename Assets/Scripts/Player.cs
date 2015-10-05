@@ -34,7 +34,7 @@ public class Player : MonoBehaviour {
     private int LinerVel = 6;
     private int LinerForce = 20;
     private float JumpVel_min = 6f;
-    private float JumpVel_max = 10f;
+    private float JumpVel_max = 14f;
 
     //----Расчет траектории 
     public Navigation navigation;
@@ -71,9 +71,15 @@ public class Player : MonoBehaviour {
         //bool H_Button = false;
         //H_Button = (bool)(Input.GetKey("h"));
         //if (H_Button)
-        //    H_ButtonMethod();
-        Debug.DrawLine(transform.position, TargetPoint, Color.yellow);
+          //  H_ButtonMethod();
 
+
+
+
+        Debug.DrawLine(transform.position, TargetPoint, Color.yellow);
+        Debug.DrawLine(transform.position, NextTarget, Color.white);
+
+        
         vel = rb.velocity;  // Нужна для корректного движения по плоскости
         
         if (JumpAngle != 0f)
@@ -85,10 +91,10 @@ public class Player : MonoBehaviour {
             JumpV0 = 0f;
         }
 
-        ProblemsDetector();
+        //ProblemsDetector();
         Balance();
         Raycasting();
-        TrajectoryDirecting();
+        //TrajectoryDirecting();
         
 
         //
@@ -96,7 +102,7 @@ public class Player : MonoBehaviour {
         //Debug.Log("Stuck timer " + StuckTimer);
        
         //---------------------------------------------------Ручное управление
-        /*
+        
         int horizontal = 0;
         int vertical = 0;
         horizontal = (int)(Input.GetAxisRaw("Horizontal"));
@@ -119,7 +125,7 @@ public class Player : MonoBehaviour {
             CalculateAngle(new Vector2(35.3f, 17f), 1);
            
         }
-         */
+         
         //---------------------------------------------------Ручное управление
     }
 
@@ -130,7 +136,7 @@ public class Player : MonoBehaviour {
         {
             if (!afterstart)
             {
-                Debug.Log("run cor");
+                //Debug.Log("run cor");
 
                 pos1 = transform.position.x;
                 float dif = Mathf.Abs(pos1 - pos0);
@@ -171,7 +177,7 @@ public class Player : MonoBehaviour {
         //Переключаемся на след целевую точку
         if (Mathf.Abs(transform.position.x - NextTarget.x) < 1 && Mathf.Abs(transform.position.y - NextTarget.y) < 1)
         {
-            rb.velocity = new Vector2(0, 0); // останавливаемся
+            //rb.velocity = new Vector2(0, 0); // останавливаемся
             if (NextTarget == navigation.GetFinalTarget())
             {
                 eventmanager.TargetReached(gameObject);
@@ -198,27 +204,27 @@ public class Player : MonoBehaviour {
 
         //Debug.Log(NextTarget_angle);
 
-        if (NextTarget_angle > -50 && NextTarget_angle < 60)
+        if (NextTarget_angle > -30 && NextTarget_angle < 30)
         {
             MoveForward(1);
         }
-        else if (NextTarget_angle > 60 && NextTarget_angle < 90)
+        else if (NextTarget_angle > 30 && NextTarget_angle < 90)
         {
             MoveForward(2);
         }
-        else if (NextTarget_angle > 90 && NextTarget_angle < 120)
+        else if (NextTarget_angle > 90 && NextTarget_angle < 150)
         {
             MoveForward(-2);
         }
-        else if (NextTarget_angle > 120 || NextTarget_angle < -130)
+        else if (NextTarget_angle > 150 || NextTarget_angle < -150)
         {
             MoveForward(-1);
         }
-        else if (NextTarget_angle > -130 && NextTarget_angle < -90)
+        else if (NextTarget_angle > -150 && NextTarget_angle < -90)
         {
             MoveForward(-3);
         }
-        else if (NextTarget_angle > -90 && NextTarget_angle < -50)
+        else if (NextTarget_angle > -90 && NextTarget_angle < -30)
         {
             MoveForward(3);
         }
@@ -313,6 +319,7 @@ public class Player : MonoBehaviour {
 
     void ScanAir(Vector2 scanpoint, int direction)
     {
+        Debug.Log("Scan Air");
         Vector2 PointToJump = new Vector2(-3, -3); //Структуру Vector2 необходимо инициализировать иначе будут ошибки компиляции
 
         RaycastHit2D hit1 = Physics2D.Raycast(scanpoint, new Vector2(direction, 1));
@@ -325,14 +332,14 @@ public class Player : MonoBehaviour {
             //Debug.Log("Platform detected");
 
             RaycastHit2D hit_jump = Physics2D.Raycast(new Vector2(transform.position.x,transform.position.y+2), new Vector2(0, 1));
-            if (hit_jump.point.y - transform.position.y < 4)  //Мы в тунеле
+            if (hit_jump.point.y - transform.position.y < 4)  //Мы в туннеле
                 return;
 
-            RaycastHit2D hit_jump0 = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y+2), new Vector2(direction, 0));
+            RaycastHit2D hit_jump0 = Physics2D.Raycast(new Vector2((scanpoint.x + 0.2f * direction), transform.position.y+1), new Vector2(direction, 0));
 
-            for (float i = 3f; i < 7; i = i + 1f)
+            for (float i = 2f; i < 7; i = i + 1f)
             {
-                RaycastHit2D hit_jump1 = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y + i), new Vector2(direction, 0));
+                RaycastHit2D hit_jump1 = Physics2D.Raycast(new Vector2((scanpoint.x + 0.2f * direction), transform.position.y + i), new Vector2(direction, 0));
                 Debug.DrawLine(new Vector2(transform.position.x, hit_jump0.point.y), hit_jump0.point, Color.white);
                 Debug.DrawLine(new Vector2(transform.position.x, hit_jump1.point.y), hit_jump1.point, Color.white);
 
@@ -461,7 +468,7 @@ public class Player : MonoBehaviour {
 
     bool ScanJump(Vector2 scanpoint, int direction)  //не работает нихера
     {
-        Debug.Log("ScanJump");
+        //Debug.Log("ScanJump");
         Vector2 HillEdge = new Vector2(-3, -3);
         RaycastHit2D hit_jump0 = Physics2D.Raycast(new Vector2(transform.position.x + direction, transform.position.y+1), new Vector2(direction, 0));
         for (float i = 2f; i < 10; i = i + 1f)
@@ -493,7 +500,7 @@ public class Player : MonoBehaviour {
 
     bool CalculateAngle(Vector2 point, int direction)
     {
-        Debug.Log("--------------------------------------------------------------------------CalculateAngle");
+        //Debug.Log("--------------------------------------------------------------------------CalculateAngle");
         Vector2 target = new Vector2(Mathf.Abs(transform.position.x - point.x), point.y); //Берем абсолютное значение по оси y, чтобы считать углы для точек которые находятся внизу
         float _angle=0f;
         float FinalJumpVel=0f;
@@ -544,15 +551,6 @@ public class Player : MonoBehaviour {
         }
     }
 
-    /*
-    void H_ButtonMethod()
-    {
-
-        var x = GameObject.Find("path").GetComponent<Navigation>(); //Поллучаем доступ к классу
-        Vector2 _point = x.GetStartPoint();
-        string ResultPath = (x.GetPath(_point)).PathName;
-        Debug.Log("-------------------------------------------Result path : " + ResultPath);
-
-    }
-     */
+    
+    
 }

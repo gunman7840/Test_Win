@@ -5,7 +5,7 @@ using System.Linq;
 
 public class Navigation : MonoBehaviour {
 
-    protected Level1 LevelData;
+    protected Level2 LevelData;
 
     protected List<TargetPoint> TP_Array = new List<TargetPoint>(); //Лист содержащий все точки всех траекторий
     protected List<Path> PathList = new List<Path>(); //Лист содержащий все пути
@@ -14,7 +14,7 @@ public class Navigation : MonoBehaviour {
     void Awake() {
 
         // awake чтобы инициализировать траектории были готовы к моменту старта Player
-        LevelData = GameObject.Find("path").GetComponent<Level1>(); //Получаем доступ к классу
+        LevelData = GameObject.Find("path").GetComponent<Level2>(); //Получаем доступ к классу
         PathList = LevelData.GetPathList();
         TP_Array= LevelData.Get_tp_Array();
 

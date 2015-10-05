@@ -8,14 +8,15 @@ public class DebugManager : MonoBehaviour {
     private float gravity = 9.8f;
 
 
-	// Use this for initialization 
-	void Start () {
+
+    // Use this for initialization 
+    void Start () {
 	
 	}
 	
 
 	void Update () {
-      
+       
     }
    
     public void DrawDebugLine(Vector2 x1, Vector2 x2, Color _color)
