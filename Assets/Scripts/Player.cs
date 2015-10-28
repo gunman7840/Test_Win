@@ -91,10 +91,10 @@ public class Player : MonoBehaviour {
             JumpV0 = 0f;
         }
 
-        //ProblemsDetector();
+        ProblemsDetector();
         Balance();
         Raycasting();
-        //TrajectoryDirecting();
+        TrajectoryDirecting();
         
 
         //
@@ -143,7 +143,7 @@ public class Player : MonoBehaviour {
                 //Debug.Log("pos0 " + pos0 + " pos1 " + pos1 + " Diff " + dif);
                 if (dif < 1)
                 {
-                    Debug.Log("---------------------------------------------------STUCK-----------------------------------------------");
+                    //Debug.Log("---------------------------------------------------STUCK-----------------------------------------------");
                     JumpAngle = random.Next(80, 100);
                     JumpV0 = 15f; //Иногда он так крепко застревает что прыжок не срабатывает, нужно учесть такие случае и применять прыжок в каждом апдейте пока он не выпрыгнет
                 }
@@ -267,7 +267,7 @@ public class Player : MonoBehaviour {
         
     }
    
-    void MoveForward(int direction)
+    void MoveForward(int direction) 
     {
 
         //Debug.Log("MoveForward");
@@ -307,7 +307,7 @@ public class Player : MonoBehaviour {
             {
                 if ((hit01.rigidbody.isKinematic == false && direction == 1) || (hit02.rigidbody.isKinematic == false && direction == -1))
                 {
-                    Debug.Log("CONTACT");
+                    //Debug.Log("CONTACT");
                     rb.AddForce(new Vector2(LinerForce * direction, 0));
                 }
             }
@@ -319,7 +319,7 @@ public class Player : MonoBehaviour {
 
     void ScanAir(Vector2 scanpoint, int direction)
     {
-        Debug.Log("Scan Air");
+        //Debug.Log("Scan Air");
         Vector2 PointToJump = new Vector2(-3, -3); //Структуру Vector2 необходимо инициализировать иначе будут ошибки компиляции
 
         RaycastHit2D hit1 = Physics2D.Raycast(scanpoint, new Vector2(direction, 1));
@@ -437,14 +437,14 @@ public class Player : MonoBehaviour {
         Vector2 HollowEdge=new Vector2(-3,-3);
 
             RaycastHit2D hit_hollow = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y + 2), new Vector2(direction, 0));
-            debugmanager.DrawDebugLine(new Vector2(transform.position.x, transform.position.y + 2), hit_hollow.point, Color.white); 
+            //debugmanager.DrawDebugLine(new Vector2(transform.position.x, transform.position.y + 2), hit_hollow.point, Color.white); 
        
             RaycastHit2D hit_depth0 = Physics2D.Raycast(new Vector2(transform.position.x +3f* direction, transform.position.y + 2), new Vector2(0, -1));
             for (float i = 4.5f; i < Mathf.Abs(transform.position.x - hit_hollow.point.x); i = i + 1.5f)
             {
                 RaycastHit2D hit_depth1 = Physics2D.Raycast(new Vector2(transform.position.x + i * direction, transform.position.y + 2), new Vector2(0, -1));
-                debugmanager.DrawDebugLine(new Vector2(hit_depth0.point.x, transform.position.y + 2), hit_depth0.point, Color.white);
-                debugmanager.DrawDebugLine(new Vector2(hit_depth1.point.x, transform.position.y + 2), hit_depth1.point, Color.white);
+                //debugmanager.DrawDebugLine(new Vector2(hit_depth0.point.x, transform.position.y + 2), hit_depth0.point, Color.white);
+                //debugmanager.DrawDebugLine(new Vector2(hit_depth1.point.x, transform.position.y + 2), hit_depth1.point, Color.white);
                 if ((transform.position.y - hit_depth1.point.y < 4) && (hit_depth1.point.y - hit_depth0.point.y < 0.5)) //Если впадина не слишком глубока и есть ровный участок, то можно прыгать
                 {
                    //Debug.DrawLine(new Vector2(hit_depth0.point.x, scanpoint.y), hit_depth0.point, Color.red);
@@ -530,7 +530,7 @@ public class Player : MonoBehaviour {
 
         TargetPoint = point; //рисуем линию до этой точки в методе scnlandscape
         //------------------------------debug
-        debugmanager.DrawParabola(transform.position, FinalJumpVel, _angle);      
+        //debugmanager.DrawParabola(transform.position, FinalJumpVel, _angle);      
         //------------------------------
 
         isOnGroundJumpCounter = 20;

@@ -67,7 +67,7 @@ public class Navigation : MonoBehaviour {
         {
             if (rnd < Available_PathList[item.Key]) //Если значение приоритета больше чем случайное значение, то возвращаем его. В противном случае уменьшаем случайное значение и переходим к след элементу массива
             {
-                Debug.Log("Get Path " + item.Key.PathName + " prioprity: " + Available_PathList[item.Key] );
+                //Debug.Log("Get Path " + item.Key.PathName + " prioprity: " + Available_PathList[item.Key] );
                 return item.Key;
             }
                rnd -= Available_PathList[item.Key];           
@@ -77,7 +77,7 @@ public class Navigation : MonoBehaviour {
 
     public Vector2 GetTarget(Vector2 _position,Path Trajectory, Vector2 _currentNextTarget)
     {
-        Debug.Log("------------------------------------------------------------------------Get target ");
+        //Debug.Log("------------------------------------------------------------------------Get target ");
      
          var debugmanager = GameObject.Find("DebugManager").GetComponent<DebugManager>(); 
 
