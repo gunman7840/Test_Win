@@ -36,7 +36,7 @@ public class EnemyManager : MonoBehaviour {
         {
             Instantiate(enemyPrefab, new Vector2(10,7), Quaternion.identity);
             Enemynumber++;
-            Debug.Log("Enemy № " + Enemynumber);
+            //Debug.Log("Enemy № " + Enemynumber);
             yield return new WaitForSeconds(1f);
            
         }
