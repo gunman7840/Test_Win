@@ -25,14 +25,7 @@ abstract class Missile_GunType : MonoBehaviour
     protected float TurnSpeed = 300;
 
     //--------Detect
-    protected enum LockTargetType 
-    {
-        LockTarget = 0,
-        UniqueTarget = 1,
-        MassTarget = 2
-    }
-    LockTargetType _locktargettype = 0;
-    //protected bool TargetisLocked = false;
+    
     GameObject currentTarget;
 
     //--------Стрельба
@@ -145,7 +138,7 @@ abstract class Missile_GunType : MonoBehaviour
         {
             float _angle = Mathf.Atan2(transform.position.y - hitCollider.attachedRigidbody.position.y, transform.position.x - hitCollider.attachedRigidbody.position.x);
 
-            if (hitCollider.attachedRigidbody.tag == "Enemy" && _angle * Mathf.Rad2Deg >= MinTurnAngle && _angle * Mathf.Rad2Deg <= MaxTurnAngle) //Возможно нужно избавиться от этих углов
+            if (hitCollider.attachedRigidbody.tag == "Enemy" &&  _angle * Mathf.Rad2Deg >= MinTurnAngle && _angle * Mathf.Rad2Deg <= MaxTurnAngle) //Возможно нужно избавиться от этих углов
             {
                 RaycastHit2D hit = Physics2D.Linecast(RCScanner_pos, hitCollider.attachedRigidbody.position);
                 //debugmanager.DrawDebugLine(RCScanner_pos, hit.point, Color.red);
@@ -169,7 +162,7 @@ abstract class Missile_GunType : MonoBehaviour
 
     protected virtual void Shoot()
     {
-        Debug.Log("Shoot base");
+        //Debug.Log("Shoot base");
     }
     
 }

@@ -7,22 +7,19 @@ public class EventManager : MonoBehaviour {
 
     public static event EventAction OnTargetReached;
 
-
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-
-      
-
-    }
-
     public void TargetReached(GameObject enemy)
     {
         OnTargetReached(enemy);
         //Debug.Log("TargetReached");
     }
+
+    /*
+    public static event EventAction DestroyEnemy_event;
+
+    public void DestroyEnemy(GameObject enemy)
+    {
+        DestroyEnemy_event(enemy);
+        //Debug.Log("TargetReached");
+    }
+    */
 }

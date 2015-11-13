@@ -52,6 +52,9 @@
      <Compile Include="Assets\Scripts\Debug\DrawDelayLine.cs" />
      <Compile Include="Assets\Scripts\Debug\WhiteSquareObj.cs" />
      <Compile Include="Assets\Scripts\Enemies\Enemy_infantry.cs" />
+     <Compile Include="Assets\Scripts\Enemies\SML\Infantry_L.cs" />
+     <Compile Include="Assets\Scripts\Enemies\SML\Infantry_M.cs" />
+     <Compile Include="Assets\Scripts\Enemies\SML\Infantry_S.cs" />
      <Compile Include="Assets\Scripts\FixedPlatform.cs" />
      <Compile Include="Assets\Scripts\Levels\Level1.cs" />
      <Compile Include="Assets\Scripts\Levels\Level2.cs" />
@@ -63,7 +66,6 @@
      <Compile Include="Assets\Scripts\Navigation\Path.cs" />
      <Compile Include="Assets\Scripts\Navigation\TargetPoint.cs" />
      <Compile Include="Assets\Scripts\Platform.cs" />
-     <Compile Include="Assets\Scripts\Player.cs" />
      <Compile Include="Assets\Scripts\Weapons\CrossBow\Arrow.cs" />
      <Compile Include="Assets\Scripts\Weapons\CrossBow\CrossBow.cs" />
      <Compile Include="Assets\Scripts\Weapons\Missile_GunType.cs" />
