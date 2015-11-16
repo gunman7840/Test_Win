@@ -26,7 +26,7 @@ public class EnemyManager : MonoBehaviour {
     void GameOver(GameObject enemy)
     {
         TargetRiched++;
-        Debug.Log("--------------GameOver-----------------------------------------------number" + TargetRiched);
+        //Debug.Log("--------------GameOver-----------------------------------------------number" + TargetRiched);
         Destroy(enemy);
     }
 
@@ -43,7 +43,7 @@ public class EnemyManager : MonoBehaviour {
 
         while (true)
         {
-            Instantiate(enemyPrefab, new Vector2(10,7), Quaternion.identity);
+            Instantiate(enemyPrefab, new Vector2(5,2), Quaternion.identity);
             Enemynumber++;
             //Debug.Log("Enemy № " + Enemynumber);
             yield return new WaitForSeconds(2f);

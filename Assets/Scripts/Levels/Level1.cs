@@ -15,7 +15,7 @@ public class Level1 : MonoBehaviour {
     public GameObject point_7;
 
   
-
+    
     protected List<TargetPoint> _tp_Array = new List<TargetPoint>(); //Лист содержащий все точки всех траекторий
 
 
@@ -26,7 +26,7 @@ public class Level1 : MonoBehaviour {
 
     void Awake()
     {
-
+        /*
         // awake чтобы инициализировать траектории были готовы к моменту старта Player
 
         //Создаем объекты траекторий и наполняем их точками
@@ -55,7 +55,7 @@ public class Level1 : MonoBehaviour {
             _point.fails = 0;
             _tp_Array.Add(_point);
         }
-
+        */
     }
 
     public List<Path> GetPathList()

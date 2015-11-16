@@ -21,13 +21,13 @@ public class Navigation : MonoBehaviour {
     }
 
     //------------------------------------------------------------------------------test
-    public Vector2 GetStartPoint()
+    public TargetPoint GetStartPoint()
     {
         return LevelData._getStartPoint();
     }    
     //------------------------------------------------------------------------------test
 
-    public Path GetPath(Vector2 CurrentPoint)  
+    public Path GetPath(TargetPoint CurrentPoint)  
     {
         
         // Метод возвращает траекторию выбранную из массива случайным образом с учетом приоритетов , а также содержащую точку в которой объект находится сейчас
@@ -75,7 +75,7 @@ public class Navigation : MonoBehaviour {
         return defaultPath;
     }
 
-    public Vector2 GetTarget(Vector2 _position,Path Trajectory, Vector2 _currentNextTarget)
+    public TargetPoint GetTarget(Vector2 _position,Path Trajectory, TargetPoint _currentNextTarget)
     {
         //Debug.Log("------------------------------------------------------------------------Get target ");
      
@@ -85,37 +85,39 @@ public class Navigation : MonoBehaviour {
         //Понижаем рейтинг точки до которой не удалось добраться
         RateTarget(Trajectory, _currentNextTarget);
 
-        Vector2 _target = _currentNextTarget; //На случай если не удасться найти ничего подходящего, оставляем текущую точку
+        TargetPoint _target = _currentNextTarget; //На случай если не удасться найти ничего подходящего, оставляем текущую точку
         //Из массива  TP_Array получаем все точки удовлетворяющие условиям, сортируем их по полю  fails           
         var query=  from point in TP_Array
-                    where (Mathf.Sqrt(Mathf.Pow((_position.x - point.position.x), 2) + Mathf.Pow((_position.y - point.position.y), 2)) <20)
-                    orderby point.fails ascending
+                    where (Vector2.Distance(_position, point.position)<7)
+                    orderby Vector2.Distance(_position, point.position) ascending
                     select point;
         foreach (TargetPoint item in query)
         {
             RaycastHit2D hit = Physics2D.Linecast(new Vector2(_position.x, _position.y + 2), item.position);
-            if (hit.point.x==0 )                     //Оставляем только те точки которые достаточно близко и в прямой видимости, если лайнкаст не встречает препятсвия то точка  hit = 0.0
+            if (hit.point.x==0 )    //Оставляем только те точки которые достаточно близко и в прямой видимости, если лайнкаст не встречает препятсвия то точка  hit = 0.0
             {
-                _target = item.position;
+                _target = item;
                 debugmanager.DrawDebugLine(_position, item.position, Color.blue);
-                //Debug.Log("Get POINT " + item.fails);
                 break;
             }
         }
 
+        
+
+
         return _target;         
     }
 
-    public void RateTarget(Path _trajectory, Vector2 _point)  
+    public void RateTarget(Path _trajectory, TargetPoint _point)  
     {
-        TargetPoint tp = TP_Array.Find(x => x.position==_point); //в массиве находим таргет поинт по условию
-        tp.fails += 1;
+        //TargetPoint tp = TP_Array.Find(x => x.position==_point); //в массиве находим таргет поинт по условию //Применялось когда в аргументе _point мы получали Vector2
+        _point.fails += 1;
         _trajectory.PathFails += 1;
     }
 
-    public Vector2 GetFinalTarget()
+    public TargetPoint GetFinalTarget()
     {
-        return LevelData.target.transform.position;
+        return LevelData._target;
     }
 
 }

@@ -9,12 +9,14 @@ public abstract class Enemy_infantry : MonoBehaviour {
     //-----Конфигурация
 
     protected float gravity = 9.8f;
-    protected int LinerVel = 6;
-    protected int LinerForce = 20;
+    protected float LinerVel = 0f;
+    protected int LinerForce = 10;
     protected float JumpVel_min = 6f;
     protected float JumpVel_max = 14f;
+    protected float JumpVel_med = 12f;
     protected float Health = 0;
     protected float DeadBodytime = 5f;
+    protected float BalanceTorque = 5f;
 
     //----Состояние объекта  
     public Transform g0, gLeft, gRight, bleft0, bleft1, bright0, bright1, leftCast, rightCast;
@@ -25,14 +27,11 @@ public abstract class Enemy_infantry : MonoBehaviour {
     protected bool isOnMovingBody = false;
     protected Vector2 MovingBodySpeed;
     protected Vector2 RelativeVel;
-    protected bool afterstart = true;
-    protected float pos0; //Используем для случаев когда объект застрял 
-    protected float pos1;
+    public bool isActive = true;
     public bool Alive=true;
 
+
     //---------Прыжки
-    protected bool Jumpbool = false; //готовы ли мы прыгать
-    protected Vector2 PointToJump = new Vector2(-3, -3);
     protected float JumpAngle = 0f;
     protected float JumpV0 = 0f;
 
@@ -40,13 +39,17 @@ public abstract class Enemy_infantry : MonoBehaviour {
     protected Navigation navigation;
     protected Vector2 TargetPoint = new Vector2(0, 0);
     protected Path Trajectory;
-    protected Vector2 NextTarget;
+    protected TargetPoint NextTarget;
     protected float NextTarget_angle;
     protected float RouteTimer = 0f;
     protected float StuckTimer = 100f;
 
-    //-------Проблемы 
-    protected bool SecondStuck = false;
+    //-------Обработка проблем при движении 
+    protected float CriticalRouteTimer = 17f;
+    protected int VelProblemCounter=0;
+    protected int WarnVelProblem = 2;
+    protected int CritVelProblem = 4;
+
     //------События 
     protected EventManager eventmanager;
 
@@ -65,34 +68,29 @@ public abstract class Enemy_infantry : MonoBehaviour {
         NextTarget = navigation.GetStartPoint();
         Trajectory = navigation.GetPath(NextTarget);
 
-        pos0 = transform.position.x;
         StartCoroutine(StuckCoroutine());
     }
 
     void Update()
     {
+        if (!isActive)
+            return;
         //Debug.Log("Update ");
         //bool H_Button = false;
         //H_Button = (bool)(Input.GetKey("h"));
         //if (H_Button)
         //  H_ButtonMethod();
-        if(Health<=0)
+        if (Health<=0)
         {
-
             StartCoroutine(Die()); 
         }
-
-        Debug.DrawLine(transform.position, TargetPoint, Color.yellow);
-        Debug.DrawLine(transform.position, NextTarget, Color.white);
-
-
+        Debug.DrawLine(transform.position, NextTarget.position, Color.white);
         vel = rb.velocity;  // Нужна для корректного движения по плоскости
-
+        
         if (JumpAngle != 0f)
         {
             //Приходится назначать скорость прямо отсюда. Если сделать это из метода Jump, то при следующем же апдейте скорость изменяется непредсказуемо
             rb.velocity = new Vector2(JumpV0 * Mathf.Cos(JumpAngle), JumpV0 * Mathf.Sin(JumpAngle));
-            //Debug.Log("Jump from update " + rb.velocity);
             JumpAngle = 0f;
             JumpV0 = 0f;
         }
@@ -100,15 +98,11 @@ public abstract class Enemy_infantry : MonoBehaviour {
         ProblemsDetector();
         Balance();
         Raycasting();
-        //TrajectoryDirecting();
+        TrajectoryDirecting();
 
 
-        //
-
-        //Debug.Log("Stuck timer " + StuckTimer);
-
-        //---------------------------------------------------Ручное управление
-        
+        /*
+         //---------------------------------------------------Ручное управление
         int horizontal = 0;
         int vertical = 0;
         horizontal = (int)(Input.GetAxisRaw("Horizontal"));
@@ -131,75 +125,26 @@ public abstract class Enemy_infantry : MonoBehaviour {
             CalculateAngle(new Vector2(35.3f, 17f), 1);
 
         }
-        
-        //---------------------------------------------------Ручное управление
-    }
-
-    IEnumerator StuckCoroutine() 
-    {
-        //Функция записывает координаты объекта через интервалы времени и если координаты не меняются , то происходит прыжок вверх под случайным углом
-        while (true)
-        {
-            if (!afterstart)
-            {
-
-                if (SecondStuck)
-                {
-                    Destroy(gameObject);
-                }
-
-                pos1 = transform.position.x;
-                
-                float dif = Mathf.Abs(pos1 - pos0);
-
-               
-                if (dif < 0.1 && dif > -0.1)
-                {
-                    //Debug.Log("---------------------------------------------------STUCK-----------------------------------------------");
-                    JumpAngle = random.Next(80, 100);
-                    JumpV0 = 15f; //Иногда он так крепко застревает что прыжок не срабатывает, нужно учесть такие случае и применять прыжок в каждом апдейте пока он не выпрыгнет
-                    SecondStuck = true;
-                }
-                pos0 = transform.position.x;              
-                yield return new WaitForSeconds(3f);
-            }
-            else
-            {
-                afterstart = false;
-                yield return new WaitForSeconds(3f);
-            }
-        }
-    }
-
-    void ProblemsDetector()
-    {
-        //Функция следит сколько времени прошло с достижения последней контрольной точки, и если много , то ищет новую контролькую точку
-        RouteTimer += 1 / 30f;
-        if (RouteTimer > 10)
-        {
-            //Debug.Log("PROBLEMS ---");
-            Vector2 newpoint = navigation.GetTarget(transform.position, Trajectory, NextTarget);
-            NextTarget = newpoint;
-            Trajectory = navigation.GetPath(NextTarget);
-            RouteTimer = 0f;
-        }
+         //---------------------------------------------------Ручное управление
+        */
 
     }
 
     void TrajectoryDirecting()
     {
         //Переключаемся на след целевую точку
-        if (Mathf.Abs(transform.position.x - NextTarget.x) < 1 && Mathf.Abs(transform.position.y - NextTarget.y) < 1)
+        if (Mathf.Abs(transform.position.x - NextTarget.position.x) < 0.5 && Mathf.Abs(transform.position.y - NextTarget.position.y) < 0.5)
         {
             //rb.velocity = new Vector2(0, 0); // останавливаемся
             if (NextTarget == navigation.GetFinalTarget())
             {
                 eventmanager.TargetReached(gameObject);
             }
+           
             int i = 0;
-            foreach (Vector2 item in Trajectory.PointsList)
+            foreach (TargetPoint item in Trajectory.PointsList)
             {
-                if (item == NextTarget)
+                if (item.position == NextTarget.position)
                 {
                     NextTarget = Trajectory.PointsList[i - 1];
                     RouteTimer = 0f;
@@ -214,37 +159,31 @@ public abstract class Enemy_infantry : MonoBehaviour {
             return;
 
         //Принимаем решение куда двигаться в зависимости от того под каким углом находится след целевая точка 
-        NextTarget_angle = Mathf.Atan2(NextTarget.y - transform.position.y, NextTarget.x - transform.position.x) * Mathf.Rad2Deg;
+        NextTarget_angle = Mathf.Atan2(NextTarget.position.y - transform.position.y, NextTarget.position.x - transform.position.x) * Mathf.Rad2Deg;
 
         //Debug.Log(NextTarget_angle);
 
-        if (NextTarget_angle > -30 && NextTarget_angle < 30)
+        if (NextTarget_angle > -90 && NextTarget_angle < 45)
         {
             MoveForward(1);
         }
-        else if (NextTarget_angle > 30 && NextTarget_angle < 90)
+        else if (NextTarget_angle > 45 && NextTarget_angle < 90)
         {
             MoveForward(2);
         }
-        else if (NextTarget_angle > 90 && NextTarget_angle < 150)
+        else if (NextTarget_angle > 90 && NextTarget_angle < 135)
         {
             MoveForward(-2);
         }
-        else if (NextTarget_angle > 150 || NextTarget_angle < -150)
+        else if (NextTarget_angle > 135 || NextTarget_angle < -90)
         {
             MoveForward(-1);
         }
-        else if (NextTarget_angle > -150 && NextTarget_angle < -90)
-        {
-            MoveForward(-3);
-        }
-        else if (NextTarget_angle > -90 && NextTarget_angle < -30)
-        {
-            MoveForward(3);
-        }
+       
 
     }
-
+    
+    //-------------------Управление
     void Raycasting()
     {
         //Debug.Log("RayCasting");
@@ -285,36 +224,28 @@ public abstract class Enemy_infantry : MonoBehaviour {
     {
 
         //Debug.Log("MoveForward");
-        switch (direction)
-        {
-            case 1:
-                ScanLandscape(rightCast.position, 1);
-                break;
-            case 2:
-                ScanAir(rightCast.position, 1);
-                break;
-            case -1:
-                ScanLandscape(leftCast.position, -1);
-                break;
-            case -2:
-                ScanAir(leftCast.position, -1);
-                break;
+        if (direction == 1 && NextTarget.edgeType == "hollow" )  //Прыгаем по параболе если: перед нами пропасть и точка приземления невысоко
+            ScanLandscape(rightCast.position, 1);
+        else if (direction == -1 && NextTarget.edgeType == "hollow")
+            ScanLandscape(leftCast.position, -1);
+        else if (direction == 2 && NextTarget.edgeType == "hollow" ) //добавил сюда hollow на случай если мы провалились в яму и пытаемся выбраться
+           Jump(1);
+        else if (direction == -2 && NextTarget.edgeType == "hollow" )
+           Jump(-1);
 
-        }
-
-        if (direction >= 2)
-            direction = 1;
-        else if (direction <= -2)
-            direction = -1;
-
+        /*
         if (isOnMovingBody)
             RelativeVel = new Vector2(vel.x - MovingBodySpeed.x, vel.y - MovingBodySpeed.y); //Двмижение по телу которое тоже движется
         else
-            RelativeVel = new Vector2(vel.x, vel.y);
+        */
+        RelativeVel = new Vector2(vel.x, vel.y);
 
 
         if (Mathf.Sqrt(RelativeVel.x * RelativeVel.x + RelativeVel.y * RelativeVel.y) < LinerVel)
         {
+            /*
+            //Эта секция отвечает за движение по кинематическим телам
+
             RaycastHit2D hit01 = Physics2D.Linecast(bleft0.position, bleft1.position);
             RaycastHit2D hit02 = Physics2D.Linecast(bright0.position, bright1.position);
             if (hit01.rigidbody != null && hit02.rigidbody != null)  //Нужен этот if , потому что у земли не определяется rigidbody и сыпятся ошибки
@@ -326,61 +257,33 @@ public abstract class Enemy_infantry : MonoBehaviour {
                 }
             }
             else
+            */
                 rb.velocity = new Vector2(vel.x + 3 * direction, rb.velocity.y);  //если он движется в другую сторону со скоростью выше модуля, то соответственно не может остановиться
         }
 
     }
 
-    void ScanAir(Vector2 scanpoint, int direction)
+    void Jump(int direction)
     {
-        //Debug.Log("Scan Air");
-        Vector2 PointToJump = new Vector2(-3, -3); //Структуру Vector2 необходимо инициализировать иначе будут ошибки компиляции
-
-        RaycastHit2D hit1 = Physics2D.Raycast(scanpoint, new Vector2(direction, 1));
-        RaycastHit2D hit2 = Physics2D.Raycast(scanpoint, new Vector2(5f * direction, 2));
-        Debug.DrawLine(scanpoint, hit1.point, Color.cyan);
-        Debug.DrawLine(scanpoint, hit2.point, Color.cyan);
-
-        if (isOnGround == true && (Mathf.Abs(hit1.point.x - transform.position.x) < 5 || Mathf.Abs(hit2.point.x - transform.position.x) < 5))
+        /*
+        // Прыжок по прямой используя валик, работает нестабильно
+        //Debug.Log("Jump");
+        isOnGroundJumpCounter = 20;
+        rb.velocity = new Vector2(0, 0); //Останавливаем тело
+        rb.angularVelocity = 0;
+        JumpAngle = NextTarget_angle*Mathf.Deg2Rad;
+        JumpV0 = JumpVel_med;
+        debugmanager.DrawDebugRay(transform.position, JumpAngle, 5, Color.cyan);
+        */
+        if (CalculateAngle(NextTarget.position, direction))
         {
-            //Debug.Log("Platform detected");
-
-            RaycastHit2D hit_jump = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y + 2), new Vector2(0, 1));
-            if (hit_jump.point.y - transform.position.y < 4)  //Мы в туннеле
-                return;
-
-            RaycastHit2D hit_jump0 = Physics2D.Raycast(new Vector2((scanpoint.x + 0.2f * direction), transform.position.y + 1), new Vector2(direction, 0));
-
-            for (float i = 2f; i < 7; i = i + 1f)
-            {
-                RaycastHit2D hit_jump1 = Physics2D.Raycast(new Vector2((scanpoint.x + 0.2f * direction), transform.position.y + i), new Vector2(direction, 0));
-                Debug.DrawLine(new Vector2(transform.position.x, hit_jump0.point.y), hit_jump0.point, Color.white);
-                Debug.DrawLine(new Vector2(transform.position.x, hit_jump1.point.y), hit_jump1.point, Color.white);
-
-                if (((hit_jump1.point.x - hit_jump0.point.x) * direction > 2) && Mathf.Abs(transform.position.x - hit_jump0.point.x) < 10) //Проверям что площадка достаточно широкая, что на нее можно запругнуть, проверям что HillEdge не слишком далеко
-                {
-
-                    Debug.DrawLine(new Vector2(transform.position.x, hit_jump1.point.y), hit_jump1.point, Color.red);
-                    PointToJump = new Vector2(hit_jump0.point.x + 0.5f * direction, hit_jump1.point.y + 0.5f);
-                    break;
-                }
-                hit_jump0 = hit_jump1;
-            }
+            return;
         }
-
-        if (PointToJump.x != -3 && PointToJump.y != -3) //Можно прыгать
-        {
-            TargetPoint = PointToJump;
-            CalculateAngle(PointToJump, direction);
-        }
-
-
     }
 
     void ScanLandscape(Vector2 scanpoint, int direction)
     {
         //Debug.Log("ScanLandscape");
-        Jumpbool = false;
         RaycastHit2D hit1 = Physics2D.Raycast(scanpoint, new Vector2(direction, -1));
         RaycastHit2D hit2 = Physics2D.Raycast(scanpoint, new Vector2(5f * direction, -2));
         RaycastHit2D hit3 = Physics2D.Raycast(scanpoint, new Vector2(5f * direction, -1));
@@ -389,127 +292,23 @@ public abstract class Enemy_infantry : MonoBehaviour {
         Debug.DrawLine(scanpoint, hit3.point, Color.cyan);
         //float tg = direction*  (hit2.point.y - hit1.point.y) / (hit2.point.x - hit1.point.x);
         float tg2 = direction * (hit3.point.y - hit2.point.y) / (hit3.point.x - hit2.point.x);
-
         //float angle = Mathf.Atan(tg);
         float angle2 = Mathf.Atan(tg2);
-        //Debug.Log("angle2 " + angle2*Mathf.Rad2Deg);
         if ((hit3.point.x - hit2.point.x) * direction < 0) //Следовательно уклон грунта больше 90 градусов и нависает
         {
             angle2 = Mathf.PI + angle2;
         }
-        //---------------------------------------------------------------------------------------------------------------------
-        //Vector2 PointToJump = new Vector2(-3, -3); //Структуру Vector2 необходимо инициализировать иначе будут ошибки компиляции
-
         if (isOnGround == true && (Mathf.Abs(transform.position.y - hit1.point.y) > 2 || Mathf.Abs(transform.position.y - hit2.point.y) > 2))  //Если есть подозрение на яму
         {
-            if (preScanHollow(scanpoint, direction) == false) //Проверяем рельеф прямо перед собой
+            if(CalculateAngle(NextTarget.position, direction))
             {
-                Jumpbool = ScanJump(scanpoint, direction);  //Сначала пытаемся прыгнуть ( на тот случай если сразу после впадины идет отвесный склон) и если не получается, тогда уже сканируем впадину и пытаемся спрыгнуть в нее
-                if (Jumpbool)
-                    return; //значит мы уже прыгаем
-                Jumpbool = ScanHollow(scanpoint, direction);
-                if (Jumpbool)
-                    return; //значит мы уже прыгаем
+                return;
             }
-        }
-        else if (isOnGround == true && (angle2 * Mathf.Rad2Deg > 50) && Mathf.Abs(transform.position.x - hit2.point.x) < 2) //Если есть подозрение на возвышенность и она находится ближе 2 метров
-        {
-            Jumpbool = ScanJump(scanpoint, direction);
-            if (Jumpbool)
-                return; //значит мы уже прыгаем
-        }
-
-    }
-
-    bool preScanHollow(Vector2 scanpoint, int direction)
-    {
-        //Если после приемлемой впадины сразу идет возвышенность то мы попадаем в тупик. Но и прыгать сразу же на нее нет смыслка потому что заранее неизвестно что это тупик. Будем решулировать через точки ориентации
-        //Debug.Log("preScanHollow");  
-        bool _freeway = false;
-        RaycastHit2D hit_hollow = Physics2D.Raycast(scanpoint, new Vector2(direction, 0));
-        //debugmanager.DrawDebugLine(scanpoint, hit_hollow.point, Color.white);
-
-        RaycastHit2D hit_depth0 = Physics2D.Raycast(new Vector2(transform.position.x + 2f * direction, scanpoint.y), new Vector2(0, -1));
-        for (float i = 3f; i < 6f; i = i + 1f)
-        {
-            RaycastHit2D hit_depth1 = Physics2D.Raycast(new Vector2(transform.position.x + i * direction, scanpoint.y), new Vector2(0, -1));
-            //debugmanager.DrawDebugLine(new Vector2(hit_depth0.point.x, scanpoint.y), hit_depth0.point, Color.white);
-            //debugmanager.DrawDebugLine(new Vector2(hit_depth1.point.x, scanpoint.y), hit_depth1.point, Color.white);
-            if ((transform.position.y - hit_depth1.point.y < 4) && (transform.position.y - hit_depth0.point.y < 4)) //Если в процессе сканирования видно, что яма не глубокая, то выходим из функции и продолжаем движение вперед
-            {
-                //Debug.Log("landscape is acceptable");
-                _freeway = true;
-                return _freeway;
-            }
-        }
-        return _freeway;
-    }
-
-    bool ScanHollow(Vector2 scanpoint, int direction)
-    {
-        //Debug.Log("ScanHollow");
-        Vector2 HollowEdge = new Vector2(-3, -3);
-
-        RaycastHit2D hit_hollow = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y + 2), new Vector2(direction, 0));
-        //debugmanager.DrawDebugLine(new Vector2(transform.position.x, transform.position.y + 2), hit_hollow.point, Color.white); 
-
-        RaycastHit2D hit_depth0 = Physics2D.Raycast(new Vector2(transform.position.x + 3f * direction, transform.position.y + 2), new Vector2(0, -1));
-        for (float i = 4.5f; i < Mathf.Abs(transform.position.x - hit_hollow.point.x); i = i + 1.5f)
-        {
-            RaycastHit2D hit_depth1 = Physics2D.Raycast(new Vector2(transform.position.x + i * direction, transform.position.y + 2), new Vector2(0, -1));
-            //debugmanager.DrawDebugLine(new Vector2(hit_depth0.point.x, transform.position.y + 2), hit_depth0.point, Color.white);
-            //debugmanager.DrawDebugLine(new Vector2(hit_depth1.point.x, transform.position.y + 2), hit_depth1.point, Color.white);
-            if ((transform.position.y - hit_depth1.point.y < 4) && (hit_depth1.point.y - hit_depth0.point.y < 0.5)) //Если впадина не слишком глубока и есть ровный участок, то можно прыгать
-            {
-                //Debug.DrawLine(new Vector2(hit_depth0.point.x, scanpoint.y), hit_depth0.point, Color.red);
-                //Debug.DrawLine(new Vector2(hit_depth1.point.x, scanpoint.y), hit_depth1.point, Color.red);
-                HollowEdge = new Vector2(hit_depth0.point.x + 0.5f * direction, hit_depth0.point.y + 0.5f);
-                break;
-            }
-            hit_depth0 = hit_depth1;
-        }
-
-        if (HollowEdge.x != -3) //Если мы нашли какую-то точку, то считаем угол
-        {
-            if (CalculateAngle(HollowEdge, direction)) //если CalculateAngle вернул true то прыжок возможен и будет выполнен в след апдейте, значения для прыжка обновлены. Выходим из всех функций через возврат true
-                return true;
             else
-                return false; //в противном случае прыжок невозможен, возвращаем false
-        }
-        else
-            return false; //точка не найдена, возвращаем false
-    }
-
-    bool ScanJump(Vector2 scanpoint, int direction)  //не работает нихера
-    {
-        //Debug.Log("ScanJump");
-        Vector2 HillEdge = new Vector2(-3, -3);
-        RaycastHit2D hit_jump0 = Physics2D.Raycast(new Vector2(transform.position.x + direction, transform.position.y + 1), new Vector2(direction, 0));
-        for (float i = 2f; i < 10; i = i + 1f)
-        {
-            RaycastHit2D hit_jump1 = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y + i), new Vector2(direction, 0));
-
-            //debugmanager.DrawDebugLine(new Vector2(transform.position.x, hit_jump0.point.y), hit_jump0.point, Color.green);
-            //debugmanager.DrawDebugLine(new Vector2(transform.position.x, hit_jump1.point.y), hit_jump1.point, Color.white);
-
-            if (((hit_jump1.point.x - hit_jump0.point.x) * direction > 1) && Mathf.Abs(transform.position.x - hit_jump0.point.x) < 10) //Проверям что площадка достаточно широкая, что на нее можно запругнуть, проверям что HillEdge не слишком далеко
             {
-                //debugmanager.DrawDebugLine(new Vector2(transform.position.x, hit_jump1.point.y + 0.5f), new Vector2(hit_jump0.point.x + 0.5f * direction, hit_jump1.point.y + 0.5f), Color.red);
-                HillEdge = new Vector2(hit_jump0.point.x + 0.5f * direction, hit_jump1.point.y + 0.5f);
-                break;
-            }
-            hit_jump0 = hit_jump1;
+                Debug.Log("Cant jump");
+            }  
         }
-
-        if (HillEdge.x != -3) //Если мы нашли какую-то точку, то считаем угол
-        {
-            if (CalculateAngle(HillEdge, direction)) //если CalculateAngle вернул true то прыжок возможен и будет выполнен в след апдейте, значения для прыжка обновлены. Выходим из всех функций через возврат true
-                return true;
-            else
-                return false; //в противном случае прыжок невозможен, возвращаем false
-        }
-        else
-            return false; //точка не найдена, возвращаем false
     }
 
     bool CalculateAngle(Vector2 point, int direction)
@@ -534,7 +333,7 @@ public abstract class Enemy_infantry : MonoBehaviour {
 
         if (_angle != _angle || _angle == 0f)  //если угол не равен самому себе значит он неопределен (float.NaN), то точка недосягаема при исходной начальной скорости
         {
-            Debug.Log("JUMP IMPOSSIBLE ");
+            //Debug.Log("JUMP IMPOSSIBLE ");
             return false;
         }
         if (direction == -1)
@@ -556,12 +355,70 @@ public abstract class Enemy_infantry : MonoBehaviour {
         return true;
     }
 
+
+    //-----------------------------------------------------------
+
+    public void SettoSleep()
+    {
+        isActive = false;
+    }
+
+    public void SettoAwake()
+    {
+        isActive = true;
+    }
+    
+    void ProblemsDetector()
+    {
+        Debug.Log("VelProblemTimer " + VelProblemCounter);
+        //Функция следит сколько времени прошло с достижения последней контрольной точки, и если много , то ищет новую контролькую точку
+        RouteTimer += 1 / 30f;
+        if (RouteTimer > CriticalRouteTimer)
+        {
+            //Debug.Log("PROBLEMS ---");
+            TargetPoint newpoint = navigation.GetTarget(transform.position, Trajectory, NextTarget);
+            NextTarget = newpoint;
+            Trajectory = navigation.GetPath(NextTarget);
+            RouteTimer = 0f;
+        }
+    }
+
+    IEnumerator StuckCoroutine()
+    {
+        //Функция записывает координаты объекта через интервалы времени и если координаты не меняются , то происходит прыжок вверх под случайным углом
+        while (true)
+        {
+            if (vel.x < 1 && vel.y < 1)
+            {
+                VelProblemCounter+=1;
+
+                if(VelProblemCounter>=WarnVelProblem)
+                {
+                    if (VelProblemCounter >= CritVelProblem)
+                    {
+                        Debug.Log("--------------------------------------------------destroy----");
+                        Destroy(gameObject);
+                    }
+                    Debug.Log("---------------------------------------------------STUCK-----------------------------------------------");
+                    JumpAngle = random.Next(80, 100);
+                    JumpV0 = 4f; 
+                }
+ 
+            }
+            else
+            {
+                VelProblemCounter = 0;
+            }
+            yield return new WaitForSeconds(2f);
+        }
+    }
+
     void Balance()
     {
         //Debug.Log(rb.rotation);
         if (Mathf.Abs(rb.rotation % 360) > 15)
         {
-            rb.AddTorque(-20 * rb.rotation / Mathf.Abs(rb.rotation));
+            rb.AddTorque(-BalanceTorque * rb.rotation / Mathf.Abs(rb.rotation));
         }
     }
 

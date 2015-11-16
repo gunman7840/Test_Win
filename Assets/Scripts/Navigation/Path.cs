@@ -8,18 +8,19 @@ public class Path
     //Класс конкретной траектории
 
     public string PathName;
-    public List<Vector2> PointsList;
+    public List<TargetPoint> PointsList;
     public int PathPriority;
     public int PathFails;
     public int PathWins;
 
-    public Path(string _PathName, List<Vector2> _PointsList, int _PathPriority)
+    public Path(string _PathName, List<TargetPoint> _PointsList, int _PathPriority)
     {
         PathName = _PathName;
         PointsList = _PointsList;
         PathPriority = _PathPriority;
     }
 
+    /*
     public void DrawPath()
     {
         //Отрисовка траектории
@@ -31,4 +32,5 @@ public class Path
             Gizmos.DrawLine(new Vector2(PointsList[i].x, PointsList[i].y), new Vector2(PointsList[i + 1].x, PointsList[i + 1].y));
         }
     }
+    */
 }

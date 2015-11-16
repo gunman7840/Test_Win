@@ -8,16 +8,6 @@ public class DebugManager : MonoBehaviour {
     private float gravity = 9.8f;
 
 
-
-    // Use this for initialization 
-    void Start () {
-	
-	}
-	
-
-	void Update () {
-       
-    }
    
     public void DrawDebugLine(Vector2 x1, Vector2 x2, Color _color)
     {
@@ -38,5 +28,14 @@ public class DebugManager : MonoBehaviour {
             Instantiate(whitesquare, new Vector2(x, y), Quaternion.identity);
         }
     }
-	
+
+    public void DrawDebugRay(Vector2 x1, float angle,int length, Color _color)
+    {
+
+        Vector2 x2 = new Vector2(length * Mathf.Cos(angle*Mathf.Deg2Rad) + x1.x, length * Mathf.Sin(angle*Mathf.Deg2Rad) + x1.y);
+
+        ((GameObject)Instantiate(delayline, new Vector2(-1, -1), Quaternion.identity)).GetComponent<DrawDelayLine>().Initialize(x1, x2, _color);
+
+    }
+
 }
