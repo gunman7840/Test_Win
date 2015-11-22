@@ -8,12 +8,14 @@ class Arrow : MonoBehaviour
 {
     private Rigidbody2D rb;
     private BoxCollider2D col_comp;
+    private Transform c_tr;
 
     void Start()
     {
         Destroy(gameObject, 5f);
         rb = GetComponent<Rigidbody2D>();
         col_comp = GetComponent<BoxCollider2D>();
+        c_tr = transform;
     }
 
     
@@ -38,9 +40,10 @@ class Arrow : MonoBehaviour
         //Debug.Log("Stick");
         rb.isKinematic = true; // stop physics
         Destroy(rb);
+       
         Destroy(col_comp);
-        transform.Translate(new Vector2(0.5f,0),Space.Self);
-        transform.parent = col.transform;
+        c_tr.Translate(new Vector2(0.5f,0),Space.Self);
+        c_tr.parent = col.transform;
         
     }
 

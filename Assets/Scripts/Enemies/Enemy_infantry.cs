@@ -68,7 +68,7 @@ public abstract class Enemy_infantry : MonoBehaviour {
         NextTarget = navigation.GetStartPoint();
         Trajectory = navigation.GetPath(NextTarget);
 
-        StartCoroutine(StuckCoroutine());
+        StartCoroutine(StuckCoroutine()); //работает ужасно
     }
 
     void Update()
@@ -84,7 +84,7 @@ public abstract class Enemy_infantry : MonoBehaviour {
         {
             StartCoroutine(Die()); 
         }
-        Debug.DrawLine(transform.position, NextTarget.position, Color.white);
+        Debug.DrawLine(rb.position, NextTarget.position, Color.white);
         vel = rb.velocity;  // Нужна для корректного движения по плоскости
         
         if (JumpAngle != 0f)
@@ -132,8 +132,9 @@ public abstract class Enemy_infantry : MonoBehaviour {
 
     void TrajectoryDirecting()
     {
+        //Debug.Log("TrajectoryDirecting");
         //Переключаемся на след целевую точку
-        if (Mathf.Abs(transform.position.x - NextTarget.position.x) < 0.5 && Mathf.Abs(transform.position.y - NextTarget.position.y) < 0.5)
+        if (Mathf.Abs(rb.position.x - NextTarget.position.x) < 0.5 && Mathf.Abs(rb.position.y - NextTarget.position.y) < 0.5)
         {
             //rb.velocity = new Vector2(0, 0); // останавливаемся
             if (NextTarget == navigation.GetFinalTarget())
@@ -159,23 +160,23 @@ public abstract class Enemy_infantry : MonoBehaviour {
             return;
 
         //Принимаем решение куда двигаться в зависимости от того под каким углом находится след целевая точка 
-        NextTarget_angle = Mathf.Atan2(NextTarget.position.y - transform.position.y, NextTarget.position.x - transform.position.x) * Mathf.Rad2Deg;
+        NextTarget_angle = Mathf.Atan2(NextTarget.position.y - rb.position.y, NextTarget.position.x - rb.position.x) * Mathf.Rad2Deg;
 
         //Debug.Log(NextTarget_angle);
 
-        if (NextTarget_angle > -90 && NextTarget_angle < 45)
+        if (NextTarget_angle > -90 && NextTarget_angle <= 45)
         {
             MoveForward(1);
         }
-        else if (NextTarget_angle > 45 && NextTarget_angle < 90)
+        else if (NextTarget_angle > 45 && NextTarget_angle <= 90)
         {
             MoveForward(2);
         }
-        else if (NextTarget_angle > 90 && NextTarget_angle < 135)
+        else if (NextTarget_angle > 90 && NextTarget_angle <= 135)
         {
             MoveForward(-2);
         }
-        else if (NextTarget_angle > 135 || NextTarget_angle < -90)
+        else if (NextTarget_angle > 135 || NextTarget_angle <= -90)
         {
             MoveForward(-1);
         }
@@ -265,16 +266,7 @@ public abstract class Enemy_infantry : MonoBehaviour {
 
     void Jump(int direction)
     {
-        /*
-        // Прыжок по прямой используя валик, работает нестабильно
-        //Debug.Log("Jump");
-        isOnGroundJumpCounter = 20;
-        rb.velocity = new Vector2(0, 0); //Останавливаем тело
-        rb.angularVelocity = 0;
-        JumpAngle = NextTarget_angle*Mathf.Deg2Rad;
-        JumpV0 = JumpVel_med;
-        debugmanager.DrawDebugRay(transform.position, JumpAngle, 5, Color.cyan);
-        */
+        
         if (CalculateAngle(NextTarget.position, direction))
         {
             return;
@@ -298,7 +290,7 @@ public abstract class Enemy_infantry : MonoBehaviour {
         {
             angle2 = Mathf.PI + angle2;
         }
-        if (isOnGround == true && (Mathf.Abs(transform.position.y - hit1.point.y) > 2 || Mathf.Abs(transform.position.y - hit2.point.y) > 2))  //Если есть подозрение на яму
+        if (isOnGround == true && (Mathf.Abs(rb.position.y - hit1.point.y) > 2 || Mathf.Abs(rb.position.y - hit2.point.y) > 2))  //Если есть подозрение на яму
         {
             if(CalculateAngle(NextTarget.position, direction))
             {
@@ -314,13 +306,13 @@ public abstract class Enemy_infantry : MonoBehaviour {
     bool CalculateAngle(Vector2 point, int direction)
     {
         //Debug.Log("--------------------------------------------------------------------------CalculateAngle");
-        Vector2 target = new Vector2(Mathf.Abs(transform.position.x - point.x), point.y); //Берем абсолютное значение по оси y, чтобы считать углы для точек которые находятся внизу
+        Vector2 target = new Vector2(Mathf.Abs(rb.position.x - point.x), point.y); //Берем абсолютное значение по оси y, чтобы считать углы для точек которые находятся внизу
         float _angle = 0f;
         float FinalJumpVel = 0f;
         for (float V0 = JumpVel_min; V0 <= JumpVel_max; V0 = V0 + 2f) //Пытаемся расчитать угол для нескольких начальных скоростей, от минимальной к максимальной
         {
-            float tg1 = (Mathf.Pow(V0, 2) + Mathf.Sqrt(Mathf.Pow(V0, 4) - gravity * (gravity * Mathf.Pow(target.x, 2) + 2 * Mathf.Pow(V0, 2) * (target.y - transform.position.y)))) / (gravity * target.x);
-            //float tg2 = (Mathf.Pow(V0, 2) - Mathf.Sqrt(Mathf.Pow(V0, 4) - gravity * (gravity * Mathf.Pow(target.x, 2) + 2 * Mathf.Pow(V0, 2) * target.y - transform.position.y))) / (gravity * target.x);
+            float tg1 = (Mathf.Pow(V0, 2) + Mathf.Sqrt(Mathf.Pow(V0, 4) - gravity * (gravity * Mathf.Pow(target.x, 2) + 2 * Mathf.Pow(V0, 2) * (target.y - rb.position.y)))) / (gravity * target.x);
+            //float tg2 = (Mathf.Pow(V0, 2) - Mathf.Sqrt(Mathf.Pow(V0, 4) - gravity * (gravity * Mathf.Pow(target.x, 2) + 2 * Mathf.Pow(V0, 2) * target.y - rb.position.y))) / (gravity * target.x);
             _angle = Mathf.Atan(tg1);
             if (_angle == _angle && _angle != 0)  //выбираем валидный угол с минимальной скоростью
             {
@@ -333,7 +325,7 @@ public abstract class Enemy_infantry : MonoBehaviour {
 
         if (_angle != _angle || _angle == 0f)  //если угол не равен самому себе значит он неопределен (float.NaN), то точка недосягаема при исходной начальной скорости
         {
-            //Debug.Log("JUMP IMPOSSIBLE ");
+            Debug.Log("JUMP IMPOSSIBLE ");
             return false;
         }
         if (direction == -1)
@@ -370,7 +362,7 @@ public abstract class Enemy_infantry : MonoBehaviour {
     
     void ProblemsDetector()
     {
-        Debug.Log("VelProblemTimer " + VelProblemCounter);
+       // Debug.Log("VelProblemTimer " + VelProblemCounter);
         //Функция следит сколько времени прошло с достижения последней контрольной точки, и если много , то ищет новую контролькую точку
         RouteTimer += 1 / 30f;
         if (RouteTimer > CriticalRouteTimer)
@@ -388,7 +380,7 @@ public abstract class Enemy_infantry : MonoBehaviour {
         //Функция записывает координаты объекта через интервалы времени и если координаты не меняются , то происходит прыжок вверх под случайным углом
         while (true)
         {
-            if (vel.x < 1 && vel.y < 1)
+            if (Mathf.Abs(vel.x) < 1 && Mathf.Abs(vel.y) < 1)
             {
                 VelProblemCounter+=1;
 
@@ -400,8 +392,8 @@ public abstract class Enemy_infantry : MonoBehaviour {
                         Destroy(gameObject);
                     }
                     Debug.Log("---------------------------------------------------STUCK-----------------------------------------------");
-                    JumpAngle = random.Next(80, 100);
-                    JumpV0 = 4f; 
+                    //JumpAngle = random.Next(80, 100);
+                    //JumpV0 = 4f; 
                 }
  
             }

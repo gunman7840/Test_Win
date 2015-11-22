@@ -4,7 +4,12 @@ using System.Collections.Generic;
 
 class CrossBow : Missile_GunType
 {
-
+    void Awake()
+    {
+        MissileSpeed = 15;
+        Missile_pos_dist = 2;
+        DetectRadius = 6;
+    }
 
 
 

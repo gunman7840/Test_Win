@@ -6,6 +6,7 @@ using System.Linq;
 public class Navigation : MonoBehaviour {
 
     protected Level2 LevelData;
+    protected DebugManager debugmanager;
 
     protected List<TargetPoint> TP_Array = new List<TargetPoint>(); //Лист содержащий все точки всех траекторий
     protected List<Path> PathList = new List<Path>(); //Лист содержащий все пути
@@ -15,6 +16,7 @@ public class Navigation : MonoBehaviour {
 
         // awake чтобы инициализировать траектории были готовы к моменту старта Player
         LevelData = GameObject.Find("path").GetComponent<Level2>(); //Получаем доступ к классу
+        debugmanager = GameObject.Find("DebugManager").GetComponent<DebugManager>();
         PathList = LevelData.GetPathList();
         TP_Array= LevelData.Get_tp_Array();
 
@@ -79,7 +81,7 @@ public class Navigation : MonoBehaviour {
     {
         //Debug.Log("------------------------------------------------------------------------Get target ");
      
-         var debugmanager = GameObject.Find("DebugManager").GetComponent<DebugManager>(); 
+        // var debugmanager = GameObject.Find("DebugManager").GetComponent<DebugManager>(); 
 
 
         //Понижаем рейтинг точки до которой не удалось добраться

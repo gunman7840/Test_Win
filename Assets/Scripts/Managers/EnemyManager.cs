@@ -14,7 +14,7 @@ public class EnemyManager : MonoBehaviour {
         EventManager.OnTargetReached += GameOver; //Подписываемся на событие(Добавляем метод который будет исполнятся по этому событию)
         //EventManager.DestroyEnemy_event += DestroyEnemy; 
 
-        //StartCoroutine(CreateEnemy());
+        StartCoroutine(CreateEnemy());
     }
 
     // Update is called once per frame
@@ -46,7 +46,7 @@ public class EnemyManager : MonoBehaviour {
             Instantiate(enemyPrefab, new Vector2(5,2), Quaternion.identity);
             Enemynumber++;
             //Debug.Log("Enemy № " + Enemynumber);
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(1f);
            
         }
     }
