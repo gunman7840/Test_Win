@@ -31,7 +31,7 @@ abstract class Missile_GunType : MonoBehaviour
     GameObject currentTarget;
 
     //--------Стрельба
-    protected float Missile_pos_dist = 3;
+    protected float Missile_pos_dist = 1;
     protected Vector2 Missile_pos;
     protected Vector2 RCScanner_pos;  // точка на конце ствола, из нее строим рейкасты до цели 
     protected float MissileSpeed = 0f;
@@ -145,7 +145,7 @@ abstract class Missile_GunType : MonoBehaviour
             if (hitCollider.attachedRigidbody.tag == "Enemy" &&  _angle * Mathf.Rad2Deg >= MinTurnAngle && _angle * Mathf.Rad2Deg <= MaxTurnAngle) //Возможно нужно избавиться от этих углов
             {
                 RaycastHit2D hit = Physics2D.Linecast(RCScanner_pos, hitCollider.attachedRigidbody.position);
-                debugmanager.DrawDebugLine(RCScanner_pos, hit.point, Color.red);
+                //debugmanager.DrawDebugLine(RCScanner_pos, hit.point, Color.red);
 
 
                 if (hit.rigidbody.tag == "Enemy")

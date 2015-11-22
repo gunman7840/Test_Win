@@ -6,8 +6,8 @@ public class Move_camera : MonoBehaviour
     private Camera _camera;
     private Transform _transform;
 
-
-    public BoxCollider2D bounds;  // коллайдер из которого берем границы карты
+    public GameObject bound_min;
+    public GameObject bound_max;
     //private float horizontalExtent, verticalExtent;
     private Vector3 Camera_extent;
     private Vector3 _min;
@@ -20,16 +20,10 @@ public class Move_camera : MonoBehaviour
 
 
     //-----moved from script
-    public float moveSensitivityX = 1.0f;
-    public float moveSensitivityY = 1.0f;
-    public bool updateZoomSensitivity = true;
-    public float orthoZoomSpeed = 0.05f;
-    public float minZoom = 1.0f;
-    public float maxZoom = 20.0f;
+    public float moveSensitivityX = 1f;
+    public float moveSensitivityY = 1f;
     public bool invertMoveX = false;
     public bool invertMoveY = false;
-    public float mapWidth = 60.0f;
-    public float mapHeight = 40.0f;
 
     public float inertiaDuration = 1.0f;
     private float scrollVelocity = 0.0f;
@@ -46,8 +40,8 @@ public class Move_camera : MonoBehaviour
         //verticalExtent = _camera.orthographicSize;
         //horizontalExtent = _camera.orthographicSize * Screen.width / Screen.height;
         Camera_extent = new Vector3(_camera.orthographicSize * Screen.width / Screen.height, _camera.orthographicSize,0);
-        _min = bounds.bounds.min+Camera_extent;
-        _max = bounds.bounds.max-Camera_extent;
+        _min = bound_min.transform.position  + Camera_extent;
+        _max = bound_max.transform.position  - Camera_extent;
 
         Debug.Log("min" + _min);
         Debug.Log("max" + _max);
