@@ -10,11 +10,10 @@ public class EnemyManager : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-
         EventManager.OnTargetReached += GameOver; //Подписываемся на событие(Добавляем метод который будет исполнятся по этому событию)
         //EventManager.DestroyEnemy_event += DestroyEnemy; 
 
-        StartCoroutine(CreateEnemy());
+        //StartCoroutine(CreateEnemy());
     }
 
     // Update is called once per frame
@@ -30,12 +29,13 @@ public class EnemyManager : MonoBehaviour {
         Destroy(enemy);
     }
 
-    void DestroyEnemy(GameObject enemy)
+    public void  DestroyEnemy(Transform _enemytransform)
     {
         enemiesdestroed++;
-        Debug.Log("--------------Destroy------------------------------number" + enemiesdestroed);
+        //Debug.Log("--------------Destroy------------------------------number" + enemiesdestroed);
+        PoolBoss.Despawn(_enemytransform);
 
-        Destroy(enemy);
+        //Destroy(enemy);
     }
 
     IEnumerator CreateEnemy()
@@ -43,7 +43,9 @@ public class EnemyManager : MonoBehaviour {
 
         while (true)
         {
-            Instantiate(enemyPrefab, new Vector2(5,2), Quaternion.identity);
+            //Instantiate(enemyPrefab, new Vector2(2,5), Quaternion.identity);
+            PoolBoss.SpawnInPool(enemyPrefab.transform, new Vector2(2, 5), Quaternion.identity);
+            
             Enemynumber++;
             //Debug.Log("Enemy № " + Enemynumber);
             yield return new WaitForSeconds(1f);

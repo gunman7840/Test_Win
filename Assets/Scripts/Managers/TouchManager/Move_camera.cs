@@ -3,6 +3,7 @@ using System.Collections;
 
 public class Move_camera : MonoBehaviour
 {
+    public UIManager uimanager;
     private Camera _camera;
     private Transform _transform;
 
@@ -43,8 +44,10 @@ public class Move_camera : MonoBehaviour
         _min = bound_min.transform.position  + Camera_extent;
         _max = bound_max.transform.position  - Camera_extent;
 
-        Debug.Log("min" + _min);
-        Debug.Log("max" + _max);
+        //Debug.Log("min" + _min);
+        //Debug.Log("max" + _max);
+
+        uimanager = GameObject.Find("UIManager").GetComponent<UIManager>();
     }
 
     void Update()
@@ -70,7 +73,7 @@ public class Move_camera : MonoBehaviour
         // Get the left mouse button
         if (Input.GetMouseButtonDown(0))
         {
-            // Get mouse origin
+            // Get mouse origin         
             mouseOrigin = Input.mousePosition;
             isPanning = true;
         }
@@ -83,7 +86,6 @@ public class Move_camera : MonoBehaviour
                 Vector3 move = new Vector3(pos.x * panSpeed, pos.y * panSpeed, 0);
                 _transform.Translate(move, Space.Self);
         }
-
     }
 
     protected void MakeDetectionTouch()
@@ -93,6 +95,7 @@ public class Move_camera : MonoBehaviour
 
         if (touches.Length < 1)
         {
+            //uimanager.CloseGUIMethod();
             //if the camera is currently scrolling
             if (scrollVelocity != 0.0f)
             {
@@ -108,9 +111,10 @@ public class Move_camera : MonoBehaviour
 
         if (touches.Length ==1)
         {
+            //uimanager.CloseGUIMethod();
             //Single touch (move)
 
-                if (touches[0].phase == TouchPhase.Began)
+            if (touches[0].phase == TouchPhase.Began)
                 {
                     scrollVelocity = 0.0f;
                 }

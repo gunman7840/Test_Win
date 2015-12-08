@@ -8,19 +8,22 @@ public abstract class Enemy_infantry : MonoBehaviour {
 
     //-----Конфигурация
 
+    public LayerMask myLayerMask ;
     protected float gravity = 9.8f;
     protected float LinerVel = 0f;
     protected int LinerForce = 10;
-    protected float JumpVel_min = 6f;
-    protected float JumpVel_max = 14f;
-    protected float JumpVel_med = 12f;
+    protected float JumpVel_min = 4f;
+    protected float JumpVel_max = 10f;
+    protected float JumpVel_med = 8f;
     protected float Health = 0;
     protected float DeadBodytime = 5f;
     protected float BalanceTorque = 5f;
-
+    protected EnemyManager enemymanager;
+    
     //----Состояние объекта  
     public Transform g0, gLeft, gRight, bleft0, bleft1, bright0, bright1, leftCast, rightCast;
     protected Rigidbody2D rb;
+    Transform _transform;
     protected Vector2 vel;
     protected bool isOnGround = false;
     protected int isOnGroundJumpCounter = 0;
@@ -57,11 +60,16 @@ public abstract class Enemy_infantry : MonoBehaviour {
     DebugManager debugmanager;
 
 
+    void Awake()
+    {
+        this.enabled = true;
+        Alive = true;
 
-    void Start () {
         rb = GetComponent<Rigidbody2D>();
+        _transform = transform;
         debugmanager = GameObject.Find("DebugManager").GetComponent<DebugManager>();
         eventmanager = GameObject.Find("Main Camera").GetComponent<EventManager>();
+        enemymanager = GameObject.Find("Main Camera").GetComponent<EnemyManager>();
 
         //Получаем первую траекторию
         navigation = GameObject.Find("Main Camera").GetComponent<Navigation>(); //Получаем доступ к классу
@@ -70,6 +78,8 @@ public abstract class Enemy_infantry : MonoBehaviour {
 
         StartCoroutine(StuckCoroutine()); //работает ужасно
     }
+
+   
 
     void Update()
     {
@@ -80,6 +90,7 @@ public abstract class Enemy_infantry : MonoBehaviour {
         //H_Button = (bool)(Input.GetKey("h"));
         //if (H_Button)
         //  H_ButtonMethod();
+        //Debug.Log("health" + Health);
         if (Health<=0)
         {
             StartCoroutine(Die()); 
@@ -276,9 +287,9 @@ public abstract class Enemy_infantry : MonoBehaviour {
     void ScanLandscape(Vector2 scanpoint, int direction)
     {
         //Debug.Log("ScanLandscape");
-        RaycastHit2D hit1 = Physics2D.Raycast(scanpoint, new Vector2(direction, -1));
-        RaycastHit2D hit2 = Physics2D.Raycast(scanpoint, new Vector2(5f * direction, -2));
-        RaycastHit2D hit3 = Physics2D.Raycast(scanpoint, new Vector2(5f * direction, -1));
+        RaycastHit2D hit1 = Physics2D.Raycast(scanpoint, new Vector2(direction, -1),100, myLayerMask);
+        RaycastHit2D hit2 = Physics2D.Raycast(scanpoint, new Vector2(5f * direction, -2), 100, myLayerMask);
+        RaycastHit2D hit3 = Physics2D.Raycast(scanpoint, new Vector2(5f * direction, -1), 100, myLayerMask);
         Debug.DrawLine(scanpoint, hit1.point, Color.cyan);
         Debug.DrawLine(scanpoint, hit2.point, Color.cyan);
         Debug.DrawLine(scanpoint, hit3.point, Color.cyan);
@@ -325,7 +336,7 @@ public abstract class Enemy_infantry : MonoBehaviour {
 
         if (_angle != _angle || _angle == 0f)  //если угол не равен самому себе значит он неопределен (float.NaN), то точка недосягаема при исходной начальной скорости
         {
-            Debug.Log("JUMP IMPOSSIBLE ");
+            //Debug.Log("JUMP IMPOSSIBLE ");
             return false;
         }
         if (direction == -1)
@@ -418,7 +429,7 @@ public abstract class Enemy_infantry : MonoBehaviour {
     {
         while (true)
         {
-            Debug.Log("Time to die " + Health);
+            //Debug.Log("Time to die " + Health);
             if (Alive)
             {
                 this.enabled = false;
@@ -428,7 +439,7 @@ public abstract class Enemy_infantry : MonoBehaviour {
             }
             else
             {
-                Destroy(gameObject);
+                enemymanager.DestroyEnemy(_transform);
                 yield return null;
             }
         }

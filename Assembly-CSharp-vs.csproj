@@ -46,8 +46,11 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Scripts\BackGround.cs" />
-     <Compile Include="Assets\Scripts\Borders.cs" />
+     <Compile Include="Assets\DarkTonic\PoolBoss\ExampleScene\Scripts\PB_Instructions.cs" />
+     <Compile Include="Assets\DarkTonic\PoolBoss\ExampleScene\Scripts\PB_Rotate.cs" />
+     <Compile Include="Assets\DarkTonic\PoolBoss\Scripts\PoolBoss.cs" />
+     <Compile Include="Assets\DarkTonic\PoolBoss\Scripts\PoolBossItem.cs" />
+     <Compile Include="Assets\DarkTonic\PoolBoss\Scripts\TimedDespawner.cs" />
      <Compile Include="Assets\Scripts\Debug\DebugManager.cs" />
      <Compile Include="Assets\Scripts\Debug\DrawDelayLine.cs" />
      <Compile Include="Assets\Scripts\Debug\WhiteSquareObj.cs" />
@@ -55,8 +58,9 @@
      <Compile Include="Assets\Scripts\Enemies\SML\Infantry_L.cs" />
      <Compile Include="Assets\Scripts\Enemies\SML\Infantry_M.cs" />
      <Compile Include="Assets\Scripts\Enemies\SML\Infantry_S.cs" />
-     <Compile Include="Assets\Scripts\FixedPlatform.cs" />
-     <Compile Include="Assets\Scripts\GUI\CameraScript.cs" />
+     <Compile Include="Assets\Scripts\GUI\CloseGUI.cs" />
+     <Compile Include="Assets\Scripts\GUI\WeaponSelector\ApplyButton.cs" />
+     <Compile Include="Assets\Scripts\GUI\WeaponSelector\WeaponSelector.cs" />
      <Compile Include="Assets\Scripts\Levels\Level1.cs" />
      <Compile Include="Assets\Scripts\Levels\Level2.cs" />
      <Compile Include="Assets\Scripts\Levels\Wheel.cs" />
@@ -65,16 +69,23 @@
      <Compile Include="Assets\Scripts\Managers\EventManager.cs" />
      <Compile Include="Assets\Scripts\Managers\GameManager.cs" />
      <Compile Include="Assets\Scripts\Managers\TouchManager\Move_camera.cs" />
-     <Compile Include="Assets\Scripts\Managers\TouchManager\Move_camera_2.cs" />
-     <Compile Include="Assets\Scripts\Managers\TouchManager\TouchDispatcher.cs" />
-     <Compile Include="Assets\Scripts\Managers\TouchManager\TouchTargetedDelegate.cs" />
+     <Compile Include="Assets\Scripts\Managers\TouchManager\dep_Move_camera.cs" />
+     <Compile Include="Assets\Scripts\Managers\TouchManager\dep_TouchDispatcher.cs" />
+     <Compile Include="Assets\Scripts\Managers\TouchManager\dep_TouchTargetedDelegate.cs" />
+     <Compile Include="Assets\Scripts\Managers\UIManager.cs" />
+     <Compile Include="Assets\Scripts\Managers\WeaponManager.cs" />
      <Compile Include="Assets\Scripts\Navigation\Navigation.cs" />
      <Compile Include="Assets\Scripts\Navigation\Path.cs" />
      <Compile Include="Assets\Scripts\Navigation\TargetPoint.cs" />
-     <Compile Include="Assets\Scripts\Platform.cs" />
      <Compile Include="Assets\Scripts\Weapons\CrossBow\Arrow.cs" />
      <Compile Include="Assets\Scripts\Weapons\CrossBow\CrossBow.cs" />
      <Compile Include="Assets\Scripts\Weapons\Missile_GunType.cs" />
+     <Compile Include="Assets\Scripts\Weapons\Platforms.cs" />
+     <Compile Include="Assets\Scripts\z_temp\BackGround.cs" />
+     <Compile Include="Assets\Scripts\z_temp\Borders.cs" />
+     <Compile Include="Assets\Scripts\z_temp\FixedPlatform.cs" />
+     <Compile Include="Assets\Scripts\z_temp\Platform.cs" />
+     <None Include="Assets\DarkTonic\PoolBoss\ReleaseNotes.txt" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>

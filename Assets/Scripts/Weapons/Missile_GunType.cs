@@ -11,7 +11,7 @@ abstract class Missile_GunType : MonoBehaviour
     public GameObject Turret_base_Prefab;
     public float Base_angle;
     public float ShootFrequency;
-
+    public LayerMask myLayerMask;
 
     protected GameObject missile;
     protected GameObject turret;
@@ -64,7 +64,7 @@ abstract class Missile_GunType : MonoBehaviour
 
     void Update()
     {
-        
+        //Debug.Log("-------------------------------------------Update ");
 
         if (TakeToAim)
         {
@@ -103,9 +103,8 @@ abstract class Missile_GunType : MonoBehaviour
     {
         while (true)
         {
-            if (true)
-            {
-                Vector2 enemyposition = DetectEnemy(DetectRadius);
+            //Debug.Log("-------------------------------------------ScanArea ");
+            Vector2 enemyposition = DetectEnemy(DetectRadius);
                 if (enemyposition.x != 0) //По умолчанию всегда 0
                 {
                     TakeToAim = true;
@@ -116,12 +115,8 @@ abstract class Missile_GunType : MonoBehaviour
                 {
                     TakeToAim = false;
                 }
-            }
-            else
-            {
-                //Здесь нужно обработать стрельбу по той же цели LockTarget
-            }
-            yield return new WaitForSeconds(0.05f);
+            
+            yield return new WaitForSeconds(0.1f);
         }
     }
     
@@ -144,18 +139,20 @@ abstract class Missile_GunType : MonoBehaviour
 
             if (hitCollider.attachedRigidbody.tag == "Enemy" &&  _angle * Mathf.Rad2Deg >= MinTurnAngle && _angle * Mathf.Rad2Deg <= MaxTurnAngle) //Возможно нужно избавиться от этих углов
             {
-                RaycastHit2D hit = Physics2D.Linecast(RCScanner_pos, hitCollider.attachedRigidbody.position);
+                RaycastHit2D hit = Physics2D.Linecast(RCScanner_pos, hitCollider.attachedRigidbody.position,myLayerMask);
                 //debugmanager.DrawDebugLine(RCScanner_pos, hit.point, Color.red);
 
-
-                if (hit.rigidbody.tag == "Enemy")
+                if (hit.rigidbody != null)
                 {
-                    Vector3 diff = hitCollider.attachedRigidbody.position - position;
-                    float curDistance = diff.sqrMagnitude;
-                    if (curDistance < distance)
+                    if (hit.rigidbody.tag == "Enemy")
                     {
-                        enemypos = hitCollider.attachedRigidbody.position;
-                        distance = curDistance;
+                        Vector3 diff = hitCollider.attachedRigidbody.position - position;
+                        float curDistance = diff.sqrMagnitude;
+                        if (curDistance < distance)
+                        {
+                            enemypos = hitCollider.attachedRigidbody.position;
+                            distance = curDistance;
+                        }
                     }
                 }
             }

@@ -19,7 +19,6 @@ public class Navigation : MonoBehaviour {
         debugmanager = GameObject.Find("DebugManager").GetComponent<DebugManager>();
         PathList = LevelData.GetPathList();
         TP_Array= LevelData.Get_tp_Array();
-
     }
 
     //------------------------------------------------------------------------------test
