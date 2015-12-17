@@ -13,20 +13,13 @@ public class EnemyManager : MonoBehaviour {
         EventManager.OnTargetReached += GameOver; //Подписываемся на событие(Добавляем метод который будет исполнятся по этому событию)
         //EventManager.DestroyEnemy_event += DestroyEnemy; 
 
-        //StartCoroutine(CreateEnemy());
+        StartCoroutine(CreateEnemy());
     }
-
-    // Update is called once per frame
-    void Update () {
-	
-	}
-
 
     void GameOver(GameObject enemy)
     {
         TargetRiched++;
-        //Debug.Log("--------------GameOver-----------------------------------------------number" + TargetRiched);
-        Destroy(enemy);
+        PoolBoss.Despawn(enemy.transform);
     }
 
     public void  DestroyEnemy(Transform _enemytransform)
@@ -34,8 +27,6 @@ public class EnemyManager : MonoBehaviour {
         enemiesdestroed++;
         //Debug.Log("--------------Destroy------------------------------number" + enemiesdestroed);
         PoolBoss.Despawn(_enemytransform);
-
-        //Destroy(enemy);
     }
 
     IEnumerator CreateEnemy()

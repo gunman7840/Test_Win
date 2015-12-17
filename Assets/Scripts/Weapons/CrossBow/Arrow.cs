@@ -6,31 +6,34 @@ using System.Collections.Generic;
 
 class Arrow : MonoBehaviour
 {
-    private Rigidbody2D rb;
+    public Rigidbody2D rb;
     private BoxCollider2D col_comp;
-    private Transform c_tr;
+    public Transform c_tr;
 
-    void Start()
+    void Awake()
     {
-        Destroy(gameObject, 5f);
         rb = GetComponent<Rigidbody2D>();
         col_comp = GetComponent<BoxCollider2D>();
         c_tr = transform;
+       
     }
 
-    
+    void OnSpawned()
+    {
+        //Debug.Log("OnSpawned");
+        rb.IsAwake();
+        rb.isKinematic = false;
+        c_tr.parent = null;
+        StartCoroutine(Disappear());
+    }
 
     void OnCollisionEnter2D(Collision2D coll)
     {
         ArrowStick(coll);
-        
 
         if (coll.gameObject.tag == "Enemy")
-        {
-            //Destroy(coll.gameObject);
-           
+        {         
             coll.gameObject.SendMessage("ApplyDamage", 10);
-            //Destroy(gameObject);
         }   
     }
 
@@ -38,14 +41,28 @@ class Arrow : MonoBehaviour
     {
 
         //Debug.Log("Stick");
+        
         rb.isKinematic = true; // stop physics
-        Destroy(rb);
-       
-        Destroy(col_comp);
+        rb.Sleep();
+
+        col_comp.enabled = false;
+        //Destroy(col_comp);
         c_tr.Translate(new Vector2(0.5f,0),Space.Self);
         c_tr.parent = col.transform;
         
     }
+
+    IEnumerator Disappear()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(5);
+            //Debug.Log("Time to die " );
+            PoolBoss.Despawn(c_tr);
+        }
+    }
+
+    
 
 }
 

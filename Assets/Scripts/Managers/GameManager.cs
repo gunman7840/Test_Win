@@ -6,7 +6,7 @@ public class GameManager : MonoBehaviour {
     public static GameManager instance = null;
     //public GameObject Robot;
 
-    private BackGround boardScript;
+    //private BackGround boardScript;
 
     void Awake()
     {
@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour {
 
 
         DontDestroyOnLoad(gameObject);
-        boardScript = GetComponent<BackGround>();
+      //  boardScript = GetComponent<BackGround>();
         InitGame();
          
 
@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour {
 
     void InitGame()
     {
-        boardScript.SetupScene();
+        //boardScript.SetupScene();
         //GameObject robot = Instantiate(Robot, new Vector3(-13f, -5f, 0f), Quaternion.identity) as GameObject;
        
     }

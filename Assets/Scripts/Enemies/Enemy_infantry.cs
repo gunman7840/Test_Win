@@ -208,8 +208,8 @@ public abstract class Enemy_infantry : MonoBehaviour {
             return;
         }
 
-        RaycastHit2D hit01 = Physics2D.Linecast(g0.position, gRight.position);
-        RaycastHit2D hit02 = Physics2D.Linecast(g0.position, gLeft.position);
+        RaycastHit2D hit01 = Physics2D.Linecast(g0.position, gRight.position, myLayerMask);
+        RaycastHit2D hit02 = Physics2D.Linecast(g0.position, gLeft.position, myLayerMask);
         if (hit01 || hit02)
         {
             isOnGround = true;
@@ -445,9 +445,33 @@ public abstract class Enemy_infantry : MonoBehaviour {
         }
     }
     
+    //-------------------------------------------------------Weapons affect
     public void ApplyDamage(int points)
     {
         Health -= points;
     }
 
+    public void SlowDown_message(int slow_effect_length)
+    {
+
+        //float RecoverLinerVel = LinerVel;
+        //LinerVel = 0.0f;
+        this.enabled = false;
+        StartCoroutine(SlowDown(slow_effect_length));
+    }
+
+    IEnumerator SlowDown(int slow_effect_length)
+    {
+        while (true)
+        {
+
+            yield return new WaitForSeconds(slow_effect_length);
+            //LinerVel = _vel;
+            this.enabled = true;
+            yield return null;
+            
+        }
+    }
+
+    //-------------------------------------------------------------------------
 }

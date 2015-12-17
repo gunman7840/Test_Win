@@ -82,7 +82,7 @@ public class Level2 : MonoBehaviour {
         _point_17 = new TargetPoint(point_17.transform.position, "hollow");
         _point_18 = new TargetPoint(point_18.transform.position, "land");
         _point_19 = new TargetPoint(point_19.transform.position, "hollow");
-        _point_20 = new TargetPoint(point_20.transform.position, "land");
+        _point_20 = new TargetPoint(point_20.transform.position, "hollow");
 
         //Создаем объекты траекторий и наполняем их точками_point_9, _poi
         TargetPoint[] _pointsarray_1 = { _target, _point_1, _point_2, _point_3, _point_4, _point_7, _point_8, _point_9, _point_6, _point_10, _point_12, _point_13, _point_14, _point_15, _point_16, _point_17, _point_18, _point_19, _point_20 };

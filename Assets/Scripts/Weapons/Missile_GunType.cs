@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-abstract class Missile_GunType : MonoBehaviour
+abstract class Missile_GunType : WeaponType
 {
     Collider2D[] hitColliders;
     public GameObject missilePrefab;
@@ -13,10 +13,10 @@ abstract class Missile_GunType : MonoBehaviour
     public float ShootFrequency;
     public LayerMask myLayerMask;
 
-    protected GameObject missile;
+    protected Transform missile;
     protected GameObject turret;
     protected GameObject turret_base;
-    protected Transform c_transform;
+    //protected Transform c_transform;
 
     //------- Поворот
     protected float MinTurnAngle;
@@ -35,7 +35,7 @@ abstract class Missile_GunType : MonoBehaviour
     protected Vector2 Missile_pos;
     protected Vector2 RCScanner_pos;  // точка на конце ствола, из нее строим рейкасты до цели 
     protected float MissileSpeed = 0f;
-    protected float RechargeTime = 1.5f;
+    public float RechargeTime = 1.5f;
     protected int DetectRadius = 10;
     protected bool TakeToAim =false;
     protected bool ReadyToShoot = true;
@@ -46,7 +46,10 @@ abstract class Missile_GunType : MonoBehaviour
 
     void Start()
     {
-        
+
+        c_transform = transform;
+        uimanager = GameObject.Find("UIManager").GetComponent<UIManager>();
+
         debugmanager = GameObject.Find("DebugManager").GetComponent<DebugManager>();
         turret = (GameObject)Instantiate(TurretPrefab, transform.position, Quaternion.AngleAxis(Base_angle - 90, new Vector3(0, 0, 1))); // -90 чтобы ствол всегда смотерл в направлении противоположном крпелению базы
         c_transform=turret.transform;
@@ -59,7 +62,6 @@ abstract class Missile_GunType : MonoBehaviour
 
         targetHeading = 0f;
         StartCoroutine(ScanArea());
-       
     }
 
     void Update()

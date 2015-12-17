@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class WeaponSelector : MonoBehaviour
 {
@@ -9,7 +10,8 @@ public class WeaponSelector : MonoBehaviour
     protected Rigidbody2D rb;
     protected RectTransform rt;
     protected Transform _transform;
-    //protected Transform _transform;
+    
+    protected 
 
     void Awake()
     {
@@ -33,10 +35,11 @@ public class WeaponSelector : MonoBehaviour
     }
 
 
+
     public void MoveandAppeare(Vector2 _pos)
     {
         gameObject.SetActive(true);
-        transform.position = new Vector3(_pos.x, _pos.y, transform.position.z);
+        _transform.position = new Vector3(_pos.x, _pos.y, _transform.position.z);
         //говорят очень 
         //rt.anchoredPosition3D = new Vector3(_pos.x, _pos.y, transform.position.z);
     }

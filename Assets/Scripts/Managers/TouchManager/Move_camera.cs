@@ -80,7 +80,7 @@ public class Move_camera : MonoBehaviour
         // Disable movements on button release
         if (!Input.GetMouseButton(0)) isPanning = false;
         // Move the camera on it's XY plane
-        if (isPanning)
+        if (isPanning && (uimanager.BlockScreenMove!=true))
         {
                 Vector3 pos = _camera.ScreenToViewportPoint(Input.mousePosition - mouseOrigin);
                 Vector3 move = new Vector3(pos.x * panSpeed, pos.y * panSpeed, 0);
@@ -90,6 +90,7 @@ public class Move_camera : MonoBehaviour
 
     protected void MakeDetectionTouch()
     {
+        //нужно оставновить движение экрана при зажатом селекторе
         //Debug.Log("MakeDetectionTouch");
         Touch[] touches = Input.touches;
 
