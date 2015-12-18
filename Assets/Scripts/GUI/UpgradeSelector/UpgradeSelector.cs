@@ -69,8 +69,8 @@ public class UpgradeSelector : MonoBehaviour
 
     public void Change(int Button_id)
     {
-        Debug.Log("upgrade selector change  " );
-        Debug.Log("upgrade selector   " + gun_transform + " " + _gun_id);
+        //Debug.Log("upgrade selector change  " );
+        //Debug.Log("upgrade selector   " + gun_transform + " " + _gun_id);
         if (Button_id == 0)
             weaponmanager.UpgradeWeapon(gun_transform, _gun_id, _transform);
         else if (Button_id == 1)

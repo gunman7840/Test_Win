@@ -20,11 +20,12 @@ class Arrow : MonoBehaviour
 
     void OnSpawned()
     {
-        //Debug.Log("OnSpawned");
+        Debug.Log("OnSpawned");
         rb.IsAwake();
         rb.isKinematic = false;
         c_tr.parent = null;
-        StartCoroutine(Disappear());
+        col_comp.enabled = true;
+       StartCoroutine(Disappear());
     }
 
     void OnCollisionEnter2D(Collision2D coll)
@@ -40,13 +41,12 @@ class Arrow : MonoBehaviour
     void ArrowStick(Collision2D col)
     {
 
-        //Debug.Log("Stick");
+        Debug.Log("Stick");
         
         rb.isKinematic = true; // stop physics
         rb.Sleep();
 
         col_comp.enabled = false;
-        //Destroy(col_comp);
         c_tr.Translate(new Vector2(0.5f,0),Space.Self);
         c_tr.parent = col.transform;
         
