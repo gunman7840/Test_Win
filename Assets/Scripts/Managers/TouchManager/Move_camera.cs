@@ -119,7 +119,7 @@ public class Move_camera : MonoBehaviour
                 {
                     scrollVelocity = 0.0f;
                 }
-                else if (touches[0].phase == TouchPhase.Moved)
+                else if (touches[0].phase == TouchPhase.Moved && (uimanager.BlockScreenMove != true))
                 {
                     Vector2 delta = touches[0].deltaPosition;
 

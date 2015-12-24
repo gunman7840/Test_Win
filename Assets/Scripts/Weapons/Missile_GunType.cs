@@ -12,6 +12,7 @@ abstract class Missile_GunType : WeaponType
     public float Base_angle;
     public float ShootFrequency;
     public LayerMask myLayerMask;
+    public int Damage;
 
     protected Transform missile;
     protected Transform turret;
@@ -44,10 +45,10 @@ abstract class Missile_GunType : WeaponType
     protected bool ReadyToShoot = true;
     
     //-----Debug 
-    DebugManager debugmanager;
+    protected DebugManager debugmanager;
 
     //------Spawning
-    private bool isReused = false;
+    protected bool isReused = false;
 
 
     void Start()
@@ -121,16 +122,17 @@ abstract class Missile_GunType : WeaponType
         
     }
 
-    IEnumerator Recharging()
+    protected IEnumerator Recharging()
     {
         //Видимо здесь будет анимация перезарядки
+        //Debug.Log("Recharging");
         yield return new WaitForSeconds(RechargeTime);
         ReadyToShoot = true; 
     }
 
     
     
-    IEnumerator ScanArea()
+    protected IEnumerator ScanArea()
     {
         while (true)
         {

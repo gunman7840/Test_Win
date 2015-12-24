@@ -15,7 +15,7 @@ public abstract class Enemy_infantry : MonoBehaviour {
     protected float JumpVel_min = 4f;
     protected float JumpVel_max = 10f;
     protected float JumpVel_med = 8f;
-    protected float Health = 0;
+    public float Health = 0;
     protected float DeadBodytime = 5f;
     protected float BalanceTorque = 5f;
     protected EnemyManager enemymanager;
@@ -95,7 +95,7 @@ public abstract class Enemy_infantry : MonoBehaviour {
         {
             StartCoroutine(Die()); 
         }
-        Debug.DrawLine(rb.position, NextTarget.position, Color.white);
+        //Debug.DrawLine(rb.position, NextTarget.position, Color.white);
         vel = rb.velocity;  // Нужна для корректного движения по плоскости
         
         if (JumpAngle != 0f)
@@ -448,6 +448,7 @@ public abstract class Enemy_infantry : MonoBehaviour {
     //-------------------------------------------------------Weapons affect
     public void ApplyDamage(int points)
     {
+        //Debug.Log("ApplyDamage " + points);
         Health -= points;
     }
 
@@ -472,6 +473,8 @@ public abstract class Enemy_infantry : MonoBehaviour {
             
         }
     }
+
+    
 
     //-------------------------------------------------------------------------
 }

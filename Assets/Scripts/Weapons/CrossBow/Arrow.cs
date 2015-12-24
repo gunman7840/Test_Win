@@ -9,6 +9,7 @@ class Arrow : MonoBehaviour
     public Rigidbody2D rb;
     private BoxCollider2D col_comp;
     public Transform c_tr;
+    public int Damage;
 
     void Awake()
     {
@@ -20,7 +21,7 @@ class Arrow : MonoBehaviour
 
     void OnSpawned()
     {
-        Debug.Log("OnSpawned");
+     //   Debug.Log("OnSpawned");
         rb.IsAwake();
         rb.isKinematic = false;
         c_tr.parent = null;
@@ -34,18 +35,14 @@ class Arrow : MonoBehaviour
 
         if (coll.gameObject.tag == "Enemy")
         {         
-            coll.gameObject.SendMessage("ApplyDamage", 10);
+            coll.gameObject.SendMessage("ApplyDamage", Damage);
         }   
     }
 
     void ArrowStick(Collision2D col)
-    {
-
-        Debug.Log("Stick");
-        
+    {        
         rb.isKinematic = true; // stop physics
         rb.Sleep();
-
         col_comp.enabled = false;
         c_tr.Translate(new Vector2(0.5f,0),Space.Self);
         c_tr.parent = col.transform;
