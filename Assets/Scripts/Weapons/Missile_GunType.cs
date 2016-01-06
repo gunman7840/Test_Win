@@ -9,7 +9,7 @@ abstract class Missile_GunType : WeaponType
     public GameObject missilePrefab;
     public Transform TurretPrefab;
     public Transform Turret_base_Prefab;
-    public float Base_angle;
+    public float Base_angle;  //Допустимы значения 0,90,-90,180
     public float ShootFrequency;
     public LayerMask myLayerMask;
     public int Damage;
@@ -35,7 +35,7 @@ abstract class Missile_GunType : WeaponType
     GameObject currentTarget;
 
     //--------Стрельба
-    protected float Missile_pos_dist = 1;
+    protected float Missile_pos_dist = 1f;
     protected Vector2 Missile_pos;
     protected Vector2 RCScanner_pos;  // точка на конце ствола, из нее строим рейкасты до цели 
     protected float MissileSpeed = 0f;
@@ -75,8 +75,8 @@ abstract class Missile_GunType : WeaponType
         turret_base.position = c_transform.position;
         turret_base.rotation = Quaternion.AngleAxis(Base_angle, new Vector3(0, 0, 1)); // 0 0 1 это ось по которой идет вращение , то есть z
 
-        MinTurnAngle = Base_angle;
-        MaxTurnAngle = Base_angle + 180;
+        MinTurnAngle = Base_angle - 180;
+        MaxTurnAngle = Base_angle ;
         RCScanner_pos = (Vector2)turret.position + new Vector2(Missile_pos_dist * Mathf.Cos((Base_angle - 90) * Mathf.Deg2Rad), Missile_pos_dist * Mathf.Sin((Base_angle - 90) * Mathf.Deg2Rad));
 
 
@@ -166,23 +166,32 @@ abstract class Missile_GunType : WeaponType
         //Находим ближайшего 
         foreach (Collider2D hitCollider in hitColliders)
         {
-            float _angle = Mathf.Atan2(turret.position.y - hitCollider.attachedRigidbody.position.y, turret.position.x - hitCollider.attachedRigidbody.position.x);
 
-            if (hitCollider.attachedRigidbody.tag == "Enemy" &&  _angle * Mathf.Rad2Deg >= MinTurnAngle && _angle * Mathf.Rad2Deg <= MaxTurnAngle) //Возможно нужно избавиться от этих углов
+            if (hitCollider.attachedRigidbody.tag == "Enemy"  )
             {
-                RaycastHit2D hit = Physics2D.Linecast(RCScanner_pos, hitCollider.attachedRigidbody.position,myLayerMask);
-                //debugmanager.DrawDebugLine(RCScanner_pos, hit.point, Color.red);
+                Rigidbody2D enemy_rb = hitCollider.attachedRigidbody;
+                float _angle = Mathf.Atan2(turret.position.y - enemy_rb.position.y, turret.position.x - enemy_rb.position.x) * Mathf.Rad2Deg;
+                //Корректируем угол , в зависимости кто над кем находится
+                if ((enemy_rb.position.y - c_transform.position.y) > 0)
+                    _angle = _angle + 180;
+                else if ((enemy_rb.position.y - c_transform.position.y) < 0)
+                    _angle = _angle - 180;
 
-                if (hit.rigidbody != null)
+                if ((Base_angle != -90 && (_angle >= MinTurnAngle && _angle <= MaxTurnAngle)) || ( Base_angle == -90 && (_angle >= MaxTurnAngle * (-1) || _angle <= MaxTurnAngle) )) //-90 (ствол смотрит влево) является исключением из алгоритма, пришлось делать отдельное условие для него
                 {
-                    if (hit.rigidbody.tag == "Enemy")
+                    RaycastHit2D hit = Physics2D.Linecast(RCScanner_pos, hitCollider.attachedRigidbody.position, myLayerMask);
+                    //debugmanager.DrawDebugLine(RCScanner_pos, hit.point, Color.red);
+                    if (hit.rigidbody != null)
                     {
-                        Vector3 diff = hitCollider.attachedRigidbody.position - position;
-                        float curDistance = diff.sqrMagnitude;
-                        if (curDistance < distance)
+                        if (hit.rigidbody.tag == "Enemy")
                         {
-                            enemypos = hitCollider.attachedRigidbody.position;
-                            distance = curDistance;
+                            Vector3 diff = hitCollider.attachedRigidbody.position - position;
+                            float curDistance = diff.sqrMagnitude;
+                            if (curDistance < distance)
+                            {
+                                enemypos = hitCollider.attachedRigidbody.position;
+                                distance = curDistance;
+                            }
                         }
                     }
                 }

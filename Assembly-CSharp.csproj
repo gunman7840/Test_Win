@@ -1,119 +1,124 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>10.0.20506</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{D4611315-0AD8-B9AA-1BD4-2BB0657BF04F}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>
-    </RootNamespace>
-    <AssemblyName>Assembly-CSharp</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <BaseDirectory>Assets</BaseDirectory>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ProductVersion>10.0.20506</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{D4611315-0AD8-B9AA-1BD4-2BB0657BF04F}</ProjectGuid>
+	<OutputType>Library</OutputType>
+	<AppDesignerFolder>Properties</AppDesignerFolder>
+	<RootNamespace></RootNamespace>
+	<AssemblyName>Assembly-CSharp</AssemblyName>
+	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<FileAlignment>512</FileAlignment>
+	<BaseDirectory>Assets</BaseDirectory>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>Temp\bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;UNITY_5_0_1;UNITY_5_0;UNITY_5;ENABLE_LICENSE_RENAME;ENABLE_NEW_BUGREPORTER;ENABLE_2D_PHYSICS;ENABLE_4_6_FEATURES;ENABLE_AUDIO;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_FRAME_DEBUGGER;ENABLE_GENERICS;ENABLE_HOME_SCREEN;ENABLE_IMAGEEFFECTS;ENABLE_LIGHT_PROBES_LEGACY;ENABLE_MICROPHONE;ENABLE_MULTIPLE_DISPLAYS;ENABLE_NEW_HIERARCHY;ENABLE_PHYSICS;ENABLE_PHYSICS_PHYSX3;ENABLE_PLUGIN_INSPECTOR;ENABLE_SHADOWS;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;ENABLE_SPRITES;ENABLE_TERRAIN;ENABLE_UNITYEVENTS;ENABLE_WEBCAM;ENABLE_WWW;ENABLE_AUDIOMIXER_SUSPEND;ENABLE_NONPRO;INCLUDE_DYNAMIC_GI;INCLUDE_GI;INCLUDE_IL2CPP;PLATFORM_SUPPORTS_MONO;UNITY_IPHONE;ENABLE_RUNTIME_GI;ENABLE_SUBSTANCE;ENABLE_GAMECENTER;ENABLE_NETWORK;UNITY_IPHONE_API;UNITY_IOS;ENABLE_TEXTUREID_MAP;PLAYERCONNECTION_LISTENS_FIXED_PORT;DEBUGGER_LISTENS_FIXED_PORT;ENABLE_MONO;ENABLE_PROFILER;UNITY_EDITOR;UNITY_EDITOR_64;UNITY_EDITOR_WIN</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <NoWarn>0169</NoWarn>
+	<DebugSymbols>true</DebugSymbols>
+	<DebugType>full</DebugType>
+	<Optimize>false</Optimize>
+	<OutputPath>Temp\bin\Debug\</OutputPath>
+	<DefineConstants>DEBUG;TRACE;UNITY_5_0_1;UNITY_5_0;UNITY_5;ENABLE_LICENSE_RENAME;ENABLE_NEW_BUGREPORTER;ENABLE_2D_PHYSICS;ENABLE_4_6_FEATURES;ENABLE_AUDIO;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_FRAME_DEBUGGER;ENABLE_GENERICS;ENABLE_HOME_SCREEN;ENABLE_IMAGEEFFECTS;ENABLE_LIGHT_PROBES_LEGACY;ENABLE_MICROPHONE;ENABLE_MULTIPLE_DISPLAYS;ENABLE_NEW_HIERARCHY;ENABLE_PHYSICS;ENABLE_PHYSICS_PHYSX3;ENABLE_PLUGIN_INSPECTOR;ENABLE_SHADOWS;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;ENABLE_SPRITES;ENABLE_TERRAIN;ENABLE_UNITYEVENTS;ENABLE_WEBCAM;ENABLE_WWW;ENABLE_AUDIOMIXER_SUSPEND;ENABLE_NONPRO;INCLUDE_DYNAMIC_GI;INCLUDE_GI;INCLUDE_IL2CPP;PLATFORM_SUPPORTS_MONO;UNITY_IPHONE;ENABLE_RUNTIME_GI;ENABLE_SUBSTANCE;ENABLE_GAMECENTER;ENABLE_NETWORK;UNITY_IPHONE_API;UNITY_IOS;ENABLE_TEXTUREID_MAP;PLAYERCONNECTION_LISTENS_FIXED_PORT;DEBUGGER_LISTENS_FIXED_PORT;ENABLE_MONO;ENABLE_PROFILER;UNITY_EDITOR;UNITY_EDITOR_64;UNITY_EDITOR_WIN</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<NoWarn>0169</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>Temp\bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <NoWarn>0169</NoWarn>
+	<DebugType>pdbonly</DebugType>
+	<Optimize>true</Optimize>
+	<OutputPath>Temp\bin\Release\</OutputPath>
+	<DefineConstants>TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<NoWarn>0169</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
+	<Reference Include="System" />
     <Reference Include="System.XML" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="UnityEngine">
-      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor">
-      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
-    </Reference>
+	<Reference Include="System.Core" />
+	<Reference Include="System.Xml.Linq" />
+	<Reference Include="UnityEngine">
+	  <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine.dll</HintPath>
+	</Reference>
+	<Reference Include="UnityEditor">
+	  <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
+	</Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\DarkTonic\PoolBoss\ExampleScene\Scripts\PB_Instructions.cs" />
-    <Compile Include="Assets\DarkTonic\PoolBoss\ExampleScene\Scripts\PB_Rotate.cs" />
-    <Compile Include="Assets\DarkTonic\PoolBoss\Scripts\PoolBoss.cs" />
-    <Compile Include="Assets\DarkTonic\PoolBoss\Scripts\PoolBossItem.cs" />
-    <Compile Include="Assets\DarkTonic\PoolBoss\Scripts\TimedDespawner.cs" />
-    <Compile Include="Assets\Scripts\Debug\DebugManager.cs" />
-    <Compile Include="Assets\Scripts\Debug\DrawDelayLine.cs" />
-    <Compile Include="Assets\Scripts\Debug\WhiteSquareObj.cs" />
-    <Compile Include="Assets\Scripts\Enemies\Enemy_infantry.cs" />
-    <Compile Include="Assets\Scripts\Enemies\Navigation\Navigation.cs" />
-    <Compile Include="Assets\Scripts\Enemies\Navigation\Path.cs" />
-    <Compile Include="Assets\Scripts\Enemies\Navigation\TargetPoint.cs" />
-    <Compile Include="Assets\Scripts\Enemies\SML\Infantry_L.cs" />
-    <Compile Include="Assets\Scripts\Enemies\SML\Infantry_M.cs" />
-    <Compile Include="Assets\Scripts\Enemies\SML\Infantry_S.cs" />
-    <Compile Include="Assets\Scripts\GUI\CloseGUI.cs" />
-    <Compile Include="Assets\Scripts\GUI\UpgradeSelector\ApplyButton_up.cs" />
-    <Compile Include="Assets\Scripts\GUI\UpgradeSelector\UpgradeSelector.cs" />
-    <Compile Include="Assets\Scripts\GUI\WeaponSelector\ApplyButton.cs" />
-    <Compile Include="Assets\Scripts\GUI\WeaponSelector\WeaponButton.cs" />
-    <Compile Include="Assets\Scripts\GUI\WeaponSelector\WeaponSelector.cs" />
-    <Compile Include="Assets\Scripts\Levels\Level1.cs" />
-    <Compile Include="Assets\Scripts\Levels\Level2.cs" />
-    <Compile Include="Assets\Scripts\Levels\Wheel.cs" />
-    <Compile Include="Assets\Scripts\Loader.cs" />
-    <Compile Include="Assets\Scripts\Managers\EnemyManager.cs" />
-    <Compile Include="Assets\Scripts\Managers\EventManager.cs" />
-    <Compile Include="Assets\Scripts\Managers\GameManager.cs" />
-    <Compile Include="Assets\Scripts\Managers\TouchManager\Move_camera.cs" />
-    <Compile Include="Assets\Scripts\Managers\UIManager.cs" />
-    <Compile Include="Assets\Scripts\Managers\WeaponManager.cs" />
-    <Compile Include="Assets\Scripts\Weapons\CrossBow\Arrow.cs" />
-    <Compile Include="Assets\Scripts\Weapons\CrossBow\CrossBow.cs" />
-    <Compile Include="Assets\Scripts\Weapons\CrossBow\Triple_CrossBow.cs" />
-    <Compile Include="Assets\Scripts\Weapons\HeavyGuns\HeavyGun.cs" />
-    <Compile Include="Assets\Scripts\Weapons\HeavyGuns\HeavyMissile.cs" />
-    <Compile Include="Assets\Scripts\Weapons\HeavyGuns\Shrapnel.cs" />
-    <Compile Include="Assets\Scripts\Weapons\HeavyGuns\ShrapnelMissile.cs" />
-    <Compile Include="Assets\Scripts\Weapons\HeavyGuns\VacuumMissile.cs" />
-    <Compile Include="Assets\Scripts\Weapons\Missile_GunType.cs" />
-    <Compile Include="Assets\Scripts\Weapons\Platforms.cs" />
-    <Compile Include="Assets\Scripts\Weapons\SawGun\Saw2.cs" />
-    <Compile Include="Assets\Scripts\Weapons\SawGun\Saw3.cs" />
-    <Compile Include="Assets\Scripts\Weapons\SawGun\Saw4.cs" />
-    <Compile Include="Assets\Scripts\Weapons\SawGun\Saw4_body.cs" />
-    <Compile Include="Assets\Scripts\Weapons\SawGun\SawGun.cs" />
-    <Compile Include="Assets\Scripts\Weapons\SawGun\SawGun3.cs" />
-    <Compile Include="Assets\Scripts\Weapons\SlowDownGuns\DoubleSlowDownGun.cs" />
-    <Compile Include="Assets\Scripts\Weapons\SlowDownGuns\GraviGun.cs" />
-    <Compile Include="Assets\Scripts\Weapons\SlowDownGuns\GraviSpaceTurret.cs" />
-    <Compile Include="Assets\Scripts\Weapons\SlowDownGuns\Javelin.cs" />
-    <Compile Include="Assets\Scripts\Weapons\SlowDownGuns\SlowDownGun.cs" />
-    <Compile Include="Assets\Scripts\Weapons\WeaponType.cs" />
-    <Compile Include="Assets\Scripts\z_temp\BackGround.cs" />
-    <Compile Include="Assets\Scripts\z_temp\Borders.cs" />
-    <Compile Include="Assets\Scripts\z_temp\FixedPlatform.cs" />
-    <Compile Include="Assets\Scripts\z_temp\Platform.cs" />
-    <Compile Include="Assets\Scripts\z_temp\dep_Move_camera.cs" />
-    <Compile Include="Assets\Scripts\z_temp\dep_TouchDispatcher.cs" />
-    <Compile Include="Assets\Scripts\z_temp\dep_TouchTargetedDelegate.cs" />
-    <None Include="Assets\DarkTonic\PoolBoss\ReleaseNotes.txt" />
-    <Reference Include="UnityEngine.UI">
-      <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.iOS.Extensions.Xcode">
-      <HintPath>C:/Program Files/Unity/Editor/Data/PlaybackEngines/iossupport/UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
-    </Reference>
+     <Compile Include="Assets\DarkTonic\PoolBoss\ExampleScene\Scripts\PB_Instructions.cs" />
+     <Compile Include="Assets\DarkTonic\PoolBoss\ExampleScene\Scripts\PB_Rotate.cs" />
+     <Compile Include="Assets\DarkTonic\PoolBoss\Scripts\PoolBoss.cs" />
+     <Compile Include="Assets\DarkTonic\PoolBoss\Scripts\PoolBossItem.cs" />
+     <Compile Include="Assets\DarkTonic\PoolBoss\Scripts\TimedDespawner.cs" />
+     <Compile Include="Assets\Scripts\Debug\DebugManager.cs" />
+     <Compile Include="Assets\Scripts\Debug\DrawDelayLine.cs" />
+     <Compile Include="Assets\Scripts\Debug\WhiteSquareObj.cs" />
+     <Compile Include="Assets\Scripts\Enemies\Air\AirEnemy.cs" />
+     <Compile Include="Assets\Scripts\Enemies\Air\JetCat.cs" />
+     <Compile Include="Assets\Scripts\Enemies\Enemy_infantry.cs" />
+     <Compile Include="Assets\Scripts\Enemies\Navigation\AirNavigation.cs" />
+     <Compile Include="Assets\Scripts\Enemies\Navigation\Navigation.cs" />
+     <Compile Include="Assets\Scripts\Enemies\Navigation\Path.cs" />
+     <Compile Include="Assets\Scripts\Enemies\Navigation\TargetPoint.cs" />
+     <Compile Include="Assets\Scripts\Enemies\SML\Infantry_L.cs" />
+     <Compile Include="Assets\Scripts\Enemies\SML\Infantry_M.cs" />
+     <Compile Include="Assets\Scripts\Enemies\SML\Infantry_S.cs" />
+     <Compile Include="Assets\Scripts\Enemies\SmartEnemy\Smart_m.cs" />
+     <Compile Include="Assets\Scripts\Enemies\SmartEnemy\Smart_trigger.cs" />
+     <Compile Include="Assets\Scripts\GUI\CloseGUI.cs" />
+     <Compile Include="Assets\Scripts\GUI\UpgradeSelector\ApplyButton_up.cs" />
+     <Compile Include="Assets\Scripts\GUI\UpgradeSelector\UpgradeSelector.cs" />
+     <Compile Include="Assets\Scripts\GUI\WeaponSelector\ApplyButton.cs" />
+     <Compile Include="Assets\Scripts\GUI\WeaponSelector\WeaponButton.cs" />
+     <Compile Include="Assets\Scripts\GUI\WeaponSelector\WeaponSelector.cs" />
+     <Compile Include="Assets\Scripts\Levels\Level1.cs" />
+     <Compile Include="Assets\Scripts\Levels\Level2.cs" />
+     <Compile Include="Assets\Scripts\Levels\Level2_air.cs" />
+     <Compile Include="Assets\Scripts\Levels\Wheel.cs" />
+     <Compile Include="Assets\Scripts\Loader.cs" />
+     <Compile Include="Assets\Scripts\Managers\EnemyManager.cs" />
+     <Compile Include="Assets\Scripts\Managers\EventManager.cs" />
+     <Compile Include="Assets\Scripts\Managers\GameManager.cs" />
+     <Compile Include="Assets\Scripts\Managers\TouchManager\Move_camera.cs" />
+     <Compile Include="Assets\Scripts\Managers\UIManager.cs" />
+     <Compile Include="Assets\Scripts\Managers\WeaponManager.cs" />
+     <Compile Include="Assets\Scripts\Weapons\CrossBow\Arrow.cs" />
+     <Compile Include="Assets\Scripts\Weapons\CrossBow\CrossBow.cs" />
+     <Compile Include="Assets\Scripts\Weapons\CrossBow\Triple_CrossBow.cs" />
+     <Compile Include="Assets\Scripts\Weapons\HeavyGuns\HeavyGun.cs" />
+     <Compile Include="Assets\Scripts\Weapons\HeavyGuns\HeavyMissile.cs" />
+     <Compile Include="Assets\Scripts\Weapons\HeavyGuns\Shrapnel.cs" />
+     <Compile Include="Assets\Scripts\Weapons\HeavyGuns\ShrapnelMissile.cs" />
+     <Compile Include="Assets\Scripts\Weapons\HeavyGuns\VacuumMissile.cs" />
+     <Compile Include="Assets\Scripts\Weapons\Missile_GunType.cs" />
+     <Compile Include="Assets\Scripts\Weapons\Platforms.cs" />
+     <Compile Include="Assets\Scripts\Weapons\SawGun\Saw2.cs" />
+     <Compile Include="Assets\Scripts\Weapons\SawGun\Saw3.cs" />
+     <Compile Include="Assets\Scripts\Weapons\SawGun\Saw4.cs" />
+     <Compile Include="Assets\Scripts\Weapons\SawGun\Saw4_body.cs" />
+     <Compile Include="Assets\Scripts\Weapons\SawGun\SawGun.cs" />
+     <Compile Include="Assets\Scripts\Weapons\SawGun\SawGun3.cs" />
+     <Compile Include="Assets\Scripts\Weapons\SlowDownGuns\DoubleSlowDownGun.cs" />
+     <Compile Include="Assets\Scripts\Weapons\SlowDownGuns\GraviGun.cs" />
+     <Compile Include="Assets\Scripts\Weapons\SlowDownGuns\GraviSpaceTurret.cs" />
+     <Compile Include="Assets\Scripts\Weapons\SlowDownGuns\Javelin.cs" />
+     <Compile Include="Assets\Scripts\Weapons\SlowDownGuns\SlowDownGun.cs" />
+     <Compile Include="Assets\Scripts\Weapons\WeaponType.cs" />
+     <Compile Include="Assets\Scripts\z_temp\BackGround.cs" />
+     <Compile Include="Assets\Scripts\z_temp\Borders.cs" />
+     <Compile Include="Assets\Scripts\z_temp\FixedPlatform.cs" />
+     <Compile Include="Assets\Scripts\z_temp\Platform.cs" />
+     <Compile Include="Assets\Scripts\z_temp\dep_Move_camera.cs" />
+     <Compile Include="Assets\Scripts\z_temp\dep_TouchDispatcher.cs" />
+     <Compile Include="Assets\Scripts\z_temp\dep_TouchTargetedDelegate.cs" />
+     <None Include="Assets\DarkTonic\PoolBoss\ReleaseNotes.txt" />
+ <Reference Include="UnityEngine.UI">
+ <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEditor.iOS.Extensions.Xcode">
+ <HintPath>C:/Program Files/Unity/Editor/Data/PlaybackEngines/iossupport/UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
+ </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -123,4 +128,5 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  
 </Project>

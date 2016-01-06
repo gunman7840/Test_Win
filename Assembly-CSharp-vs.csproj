@@ -54,13 +54,18 @@
      <Compile Include="Assets\Scripts\Debug\DebugManager.cs" />
      <Compile Include="Assets\Scripts\Debug\DrawDelayLine.cs" />
      <Compile Include="Assets\Scripts\Debug\WhiteSquareObj.cs" />
+     <Compile Include="Assets\Scripts\Enemies\Air\AirEnemy.cs" />
+     <Compile Include="Assets\Scripts\Enemies\Air\JetCat.cs" />
      <Compile Include="Assets\Scripts\Enemies\Enemy_infantry.cs" />
+     <Compile Include="Assets\Scripts\Enemies\Navigation\AirNavigation.cs" />
      <Compile Include="Assets\Scripts\Enemies\Navigation\Navigation.cs" />
      <Compile Include="Assets\Scripts\Enemies\Navigation\Path.cs" />
      <Compile Include="Assets\Scripts\Enemies\Navigation\TargetPoint.cs" />
      <Compile Include="Assets\Scripts\Enemies\SML\Infantry_L.cs" />
      <Compile Include="Assets\Scripts\Enemies\SML\Infantry_M.cs" />
      <Compile Include="Assets\Scripts\Enemies\SML\Infantry_S.cs" />
+     <Compile Include="Assets\Scripts\Enemies\SmartEnemy\Smart_m.cs" />
+     <Compile Include="Assets\Scripts\Enemies\SmartEnemy\Smart_trigger.cs" />
      <Compile Include="Assets\Scripts\GUI\CloseGUI.cs" />
      <Compile Include="Assets\Scripts\GUI\UpgradeSelector\ApplyButton_up.cs" />
      <Compile Include="Assets\Scripts\GUI\UpgradeSelector\UpgradeSelector.cs" />
@@ -69,6 +74,7 @@
      <Compile Include="Assets\Scripts\GUI\WeaponSelector\WeaponSelector.cs" />
      <Compile Include="Assets\Scripts\Levels\Level1.cs" />
      <Compile Include="Assets\Scripts\Levels\Level2.cs" />
+     <Compile Include="Assets\Scripts\Levels\Level2_air.cs" />
      <Compile Include="Assets\Scripts\Levels\Wheel.cs" />
      <Compile Include="Assets\Scripts\Loader.cs" />
      <Compile Include="Assets\Scripts\Managers\EnemyManager.cs" />

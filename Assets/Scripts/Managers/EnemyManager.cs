@@ -39,7 +39,7 @@ public class EnemyManager : MonoBehaviour {
             
             Enemynumber++;
             //Debug.Log("Enemy № " + Enemynumber);
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(2f);
            
         }
     }

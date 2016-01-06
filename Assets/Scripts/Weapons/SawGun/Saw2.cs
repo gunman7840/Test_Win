@@ -32,7 +32,7 @@ class Saw2 : MonoBehaviour
     void OnTriggerEnter2D(Collider2D coll)
     {
 
-        if (coll.gameObject.tag == "Enemy")
+        if (coll.gameObject.tag == "Enemy" || coll.gameObject.tag == "Inv_enemy")
         {
             Debug.Log("enemy");
             coll.gameObject.SendMessage("ApplyDamage", Damage);

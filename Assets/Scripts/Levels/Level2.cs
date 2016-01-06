@@ -27,6 +27,10 @@ public class Level2 : MonoBehaviour {
     public GameObject point_19;
     public GameObject point_20;
 
+    public GameObject air_target;
+    public GameObject air_point_1;
+    public GameObject air_point_2;
+
     public TargetPoint _target; 
     private TargetPoint _point_1;
     private TargetPoint _point_2;
@@ -49,6 +53,9 @@ public class Level2 : MonoBehaviour {
     private TargetPoint _point_19;
     private TargetPoint _point_20;
 
+    public TargetPoint _air_target;
+    private TargetPoint _air_point_1;
+    private TargetPoint _air_point_2;
 
     protected List<TargetPoint> _tp_Array = new List<TargetPoint>(); //Лист содержащий все точки всех траекторий
 
@@ -60,7 +67,7 @@ public class Level2 : MonoBehaviour {
 
     void Awake()
     {
-
+        //Debug.Log("level2 awake");
         // awake чтобы инициализировать траектории были готовы к моменту старта Player
         _target = new TargetPoint(target.transform.position, "land");
         _point_1= new TargetPoint(point_1.transform.position, "hollow");

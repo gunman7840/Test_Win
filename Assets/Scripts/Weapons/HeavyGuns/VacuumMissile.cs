@@ -43,7 +43,7 @@ class VacuumMissile : MonoBehaviour
     void OnCollisionEnter2D(Collision2D coll)
     {
         
-        if (coll.gameObject.tag == "Enemy")
+        if (coll.gameObject.tag == "Enemy" || coll.gameObject.tag == "Inv_enemy")
         {
            coll.gameObject.SendMessage("ApplyDamage", 30); //Это достается не только тем в кого попал снаряд , но и тем кого засасало в него
         }
@@ -69,7 +69,7 @@ class VacuumMissile : MonoBehaviour
             foreach (Collider2D hitCollider in hitColliders)
             {
 
-                if (hitCollider.gameObject.tag == "Enemy")
+                if (hitCollider.gameObject.tag == "Enemy" || hitCollider.gameObject.tag == "Inv_enemy")
                 {
                     Rigidbody2D rb = hitCollider.attachedRigidbody;
                     debugmanager.DrawDebugLine(c_tr.position, rb.position, Color.red);

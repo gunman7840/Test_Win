@@ -33,7 +33,7 @@ class Arrow : MonoBehaviour
     {
         ArrowStick(coll);
 
-        if (coll.gameObject.tag == "Enemy")
+        if (coll.gameObject.tag == "Enemy" || coll.gameObject.tag == "Inv_enemy")
         {         
             coll.gameObject.SendMessage("ApplyDamage", Damage);
         }   

@@ -45,7 +45,7 @@ class ShrapnelMissile : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D coll)
     {
-        if (coll.gameObject.tag == "Enemy")
+        if (coll.gameObject.tag == "Enemy" || coll.gameObject.tag == "Inv_enemy")
         {
             coll.gameObject.SendMessage("ApplyDamage", 30);
         }

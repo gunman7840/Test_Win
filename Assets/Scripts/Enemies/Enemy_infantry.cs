@@ -10,7 +10,7 @@ public abstract class Enemy_infantry : MonoBehaviour {
 
     public LayerMask myLayerMask ;
     protected float gravity = 9.8f;
-    protected float LinerVel = 0f;
+    public float LinerVel = 0f;
     protected int LinerForce = 10;
     protected float JumpVel_min = 4f;
     protected float JumpVel_max = 10f;
@@ -23,8 +23,9 @@ public abstract class Enemy_infantry : MonoBehaviour {
     //----Состояние объекта  
     public Transform g0, gLeft, gRight, bleft0, bleft1, bright0, bright1, leftCast, rightCast;
     protected Rigidbody2D rb;
-    Transform _transform;
+    protected Transform _transform;
     protected Vector2 vel;
+    protected int Global_direction;
     protected bool isOnGround = false;
     protected int isOnGroundJumpCounter = 0;
     protected bool isOnMovingBody = false;
@@ -57,11 +58,12 @@ public abstract class Enemy_infantry : MonoBehaviour {
     protected EventManager eventmanager;
 
     //-----Debug 
-    DebugManager debugmanager;
+    protected DebugManager debugmanager;
 
 
-    void Awake()
+    protected void Awake()
     {
+        //Debug.Log("Enemy awake");
         this.enabled = true;
         Alive = true;
 
@@ -79,9 +81,9 @@ public abstract class Enemy_infantry : MonoBehaviour {
         StartCoroutine(StuckCoroutine()); //работает ужасно
     }
 
-   
 
-    void Update()
+
+    protected void Update()
     {
         if (!isActive)
             return;
@@ -105,6 +107,7 @@ public abstract class Enemy_infantry : MonoBehaviour {
             JumpAngle = 0f;
             JumpV0 = 0f;
         }
+
 
         ProblemsDetector();
         Balance();
@@ -141,13 +144,15 @@ public abstract class Enemy_infantry : MonoBehaviour {
 
     }
 
-    void TrajectoryDirecting()
+    protected void TrajectoryDirecting()
     {
         //Debug.Log("TrajectoryDirecting");
         //Переключаемся на след целевую точку
         if (Mathf.Abs(rb.position.x - NextTarget.position.x) < 0.5 && Mathf.Abs(rb.position.y - NextTarget.position.y) < 0.5)
         {
-            //rb.velocity = new Vector2(0, 0); // останавливаемся
+
+            rb.velocity = new Vector2(rb.velocity.x* 0.2f , rb.velocity.y); // останавливаемся
+
             if (NextTarget == navigation.GetFinalTarget())
             {
                 eventmanager.TargetReached(gameObject);
@@ -173,7 +178,7 @@ public abstract class Enemy_infantry : MonoBehaviour {
         //Принимаем решение куда двигаться в зависимости от того под каким углом находится след целевая точка 
         NextTarget_angle = Mathf.Atan2(NextTarget.position.y - rb.position.y, NextTarget.position.x - rb.position.x) * Mathf.Rad2Deg;
 
-        //Debug.Log(NextTarget_angle);
+        
 
         if (NextTarget_angle > -90 && NextTarget_angle <= 45)
         {
@@ -194,9 +199,9 @@ public abstract class Enemy_infantry : MonoBehaviour {
        
 
     }
-    
+
     //-------------------Управление
-    void Raycasting()
+    protected void Raycasting()
     {
         //Debug.Log("RayCasting");
 
@@ -232,9 +237,9 @@ public abstract class Enemy_infantry : MonoBehaviour {
 
     }
 
-    void MoveForward(int direction)
+    protected void MoveForward(int direction)
     {
-
+        Global_direction = direction;
         //Debug.Log("MoveForward");
         if (direction == 1 && NextTarget.edgeType == "hollow" )  //Прыгаем по параболе если: перед нами пропасть и точка приземления невысоко
             ScanLandscape(rightCast.position, 1);
@@ -252,6 +257,7 @@ public abstract class Enemy_infantry : MonoBehaviour {
         */
         RelativeVel = new Vector2(vel.x, vel.y);
 
+        //Debug.Log("MoveForward rb.velocity " + rb.velocity +" SQRT " + Mathf.Sqrt(RelativeVel.x * RelativeVel.x + RelativeVel.y * RelativeVel.y) + "vel " + LinerVel);
 
         if (Mathf.Sqrt(RelativeVel.x * RelativeVel.x + RelativeVel.y * RelativeVel.y) < LinerVel)
         {
@@ -270,12 +276,12 @@ public abstract class Enemy_infantry : MonoBehaviour {
             }
             else
             */
-                rb.velocity = new Vector2(vel.x + 3 * direction, rb.velocity.y);  //если он движется в другую сторону со скоростью выше модуля, то соответственно не может остановиться
+            rb.velocity = new Vector2(vel.x + 3 * direction, rb.velocity.y);  //если он движется в другую сторону со скоростью выше модуля, то соответственно не может остановиться
         }
 
     }
 
-    void Jump(int direction)
+    protected void Jump(int direction)
     {
         
         if (CalculateAngle(NextTarget.position, direction))
@@ -284,7 +290,7 @@ public abstract class Enemy_infantry : MonoBehaviour {
         }
     }
 
-    void ScanLandscape(Vector2 scanpoint, int direction)
+    protected void ScanLandscape(Vector2 scanpoint, int direction)
     {
         //Debug.Log("ScanLandscape");
         RaycastHit2D hit1 = Physics2D.Raycast(scanpoint, new Vector2(direction, -1),100, myLayerMask);
@@ -314,7 +320,7 @@ public abstract class Enemy_infantry : MonoBehaviour {
         }
     }
 
-    bool CalculateAngle(Vector2 point, int direction)
+    protected bool CalculateAngle(Vector2 point, int direction)
     {
         //Debug.Log("--------------------------------------------------------------------------CalculateAngle");
         Vector2 target = new Vector2(Mathf.Abs(rb.position.x - point.x), point.y); //Берем абсолютное значение по оси y, чтобы считать углы для точек которые находятся внизу
@@ -370,8 +376,8 @@ public abstract class Enemy_infantry : MonoBehaviour {
     {
         isActive = true;
     }
-    
-    void ProblemsDetector()
+
+    protected void ProblemsDetector()
     {
        // Debug.Log("VelProblemTimer " + VelProblemCounter);
         //Функция следит сколько времени прошло с достижения последней контрольной точки, и если много , то ищет новую контролькую точку
@@ -386,7 +392,7 @@ public abstract class Enemy_infantry : MonoBehaviour {
         }
     }
 
-    IEnumerator StuckCoroutine()
+    protected IEnumerator StuckCoroutine()
     {
         //Функция записывает координаты объекта через интервалы времени и если координаты не меняются , то происходит прыжок вверх под случайным углом
         while (true)
@@ -416,7 +422,7 @@ public abstract class Enemy_infantry : MonoBehaviour {
         }
     }
 
-    void Balance()
+    protected void Balance()
     {
         //Debug.Log(rb.rotation);
         if (Mathf.Abs(rb.rotation % 360) > 15)
@@ -425,7 +431,7 @@ public abstract class Enemy_infantry : MonoBehaviour {
         }
     }
 
-    IEnumerator Die()
+    protected IEnumerator Die()
     {
         while (true)
         {
@@ -461,7 +467,7 @@ public abstract class Enemy_infantry : MonoBehaviour {
         StartCoroutine(SlowDown(slow_effect_length));
     }
 
-    IEnumerator SlowDown(int slow_effect_length)
+    protected IEnumerator SlowDown(int slow_effect_length)
     {
         while (true)
         {
