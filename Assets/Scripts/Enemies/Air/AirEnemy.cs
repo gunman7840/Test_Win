@@ -2,19 +2,18 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public abstract class AirEnemy : MonoBehaviour
+public abstract class AirEnemy : EnemyType
 {
 
     private static System.Random random = new System.Random();
 
     //-----Конфигурация
 
-    public LayerMask myLayerMask;
+    //public LayerMask myLayerMask;
     public float LinerVel;
-    public float Health = 0;
     protected float DeadBodytime = 100f;
     protected float BalanceTorque = 5f;
-    protected EnemyManager enemymanager;
+    //protected EnemyManager enemymanager;
 
     //----Состояние объекта  
     protected Rigidbody2D rb;
@@ -47,13 +46,13 @@ public abstract class AirEnemy : MonoBehaviour
     protected void Start()
     {
         //Debug.Log("Enemy awake");
+        EnemyType_Awake();
         this.enabled = true;
 
         rb = GetComponent<Rigidbody2D>();
         _transform = transform;
         debugmanager = GameObject.Find("DebugManager").GetComponent<DebugManager>();
         eventmanager = GameObject.Find("Main Camera").GetComponent<EventManager>();
-        enemymanager = GameObject.Find("Main Camera").GetComponent<EnemyManager>();
 
         //Получаем первую траекторию
         navigation = GameObject.Find("Main Camera").GetComponent<AirNavigation>(); //Получаем доступ к классу
@@ -63,7 +62,7 @@ public abstract class AirEnemy : MonoBehaviour
         //Debug.Log("nav " + NextTarget.position + " " + Trajectory.PathName);
 
 
-        //StartCoroutine(StuckCoroutine()); //работает ужасно
+        StartCoroutine(StuckCoroutine()); //работает ужасно
     }
 
     protected void Update()

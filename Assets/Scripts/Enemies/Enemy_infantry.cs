@@ -2,23 +2,23 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public abstract class Enemy_infantry : MonoBehaviour {
+public abstract class Enemy_infantry : EnemyType
+{
 
     private static System.Random random = new System.Random();
 
     //-----Конфигурация
 
-    public LayerMask myLayerMask ;
+    //public LayerMask myLayerMask ;
     protected float gravity = 9.8f;
     public float LinerVel = 0f;
     protected int LinerForce = 10;
     protected float JumpVel_min = 4f;
     protected float JumpVel_max = 10f;
     protected float JumpVel_med = 8f;
-    public float Health = 0;
     protected float DeadBodytime = 5f;
-    protected float BalanceTorque = 5f;
-    protected EnemyManager enemymanager;
+    public float BalanceTorque;
+    //protected EnemyManager enemymanager;
     
     //----Состояние объекта  
     public Transform g0, gLeft, gRight, bleft0, bleft1, bright0, bright1, leftCast, rightCast;
@@ -63,7 +63,9 @@ public abstract class Enemy_infantry : MonoBehaviour {
 
     protected void Awake()
     {
-        //Debug.Log("Enemy awake");
+        //Debug.Log("Enemy inf awake");
+        EnemyType_Awake();
+
         this.enabled = true;
         Alive = true;
 
@@ -71,7 +73,6 @@ public abstract class Enemy_infantry : MonoBehaviour {
         _transform = transform;
         debugmanager = GameObject.Find("DebugManager").GetComponent<DebugManager>();
         eventmanager = GameObject.Find("Main Camera").GetComponent<EventManager>();
-        enemymanager = GameObject.Find("Main Camera").GetComponent<EnemyManager>();
 
         //Получаем первую траекторию
         navigation = GameObject.Find("Main Camera").GetComponent<Navigation>(); //Получаем доступ к классу
@@ -435,7 +436,6 @@ public abstract class Enemy_infantry : MonoBehaviour {
     {
         while (true)
         {
-            //Debug.Log("Time to die " + Health);
             if (Alive)
             {
                 this.enabled = false;

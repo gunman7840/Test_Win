@@ -104,9 +104,6 @@ public class Navigation : MonoBehaviour {
             }
         }
 
-        
-
-
         return _target;         
     }
 

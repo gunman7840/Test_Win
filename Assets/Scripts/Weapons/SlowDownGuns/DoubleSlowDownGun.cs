@@ -39,12 +39,12 @@ class DoubleSlowDownGun : Missile_GunType
         missile2 = PoolBoss.SpawnInPool(missilePrefab.transform, Missile_pos_l.position, Quaternion.Slerp(turret.rotation, q, 1f));
         Rigidbody2D rb2 = missile2.GetComponent<Rigidbody2D>();
         rb2.velocity = new Vector2(MissileSpeed * Mathf.Cos(targetHeading * Mathf.Deg2Rad), MissileSpeed * Mathf.Sin(targetHeading * Mathf.Deg2Rad));
-        Debug.Log("vel2" + rb2.velocity);
+        //Debug.Log("vel2" + rb2.velocity);
 
         missile3 = PoolBoss.SpawnInPool(missilePrefab.transform, Missile_pos_r.position, Quaternion.Slerp(turret.rotation, q, 1f));
         Rigidbody2D rb3 = missile3.GetComponent<Rigidbody2D>();
         rb3.velocity = new Vector2(MissileSpeed * Mathf.Cos(targetHeading * Mathf.Deg2Rad), MissileSpeed * Mathf.Sin(targetHeading * Mathf.Deg2Rad));
-        Debug.Log("vel3" + rb3.velocity);
+        //Debug.Log("vel3" + rb3.velocity);
 
     }
 

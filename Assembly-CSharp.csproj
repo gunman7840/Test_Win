@@ -56,7 +56,9 @@
      <Compile Include="Assets\Scripts\Debug\WhiteSquareObj.cs" />
      <Compile Include="Assets\Scripts\Enemies\Air\AirEnemy.cs" />
      <Compile Include="Assets\Scripts\Enemies\Air\JetCat.cs" />
+     <Compile Include="Assets\Scripts\Enemies\EnemyType.cs" />
      <Compile Include="Assets\Scripts\Enemies\Enemy_infantry.cs" />
+     <Compile Include="Assets\Scripts\Enemies\Invisible\Invisible_inf.cs" />
      <Compile Include="Assets\Scripts\Enemies\Navigation\AirNavigation.cs" />
      <Compile Include="Assets\Scripts\Enemies\Navigation\Navigation.cs" />
      <Compile Include="Assets\Scripts\Enemies\Navigation\Path.cs" />
@@ -75,7 +77,6 @@
      <Compile Include="Assets\Scripts\Levels\Level1.cs" />
      <Compile Include="Assets\Scripts\Levels\Level2.cs" />
      <Compile Include="Assets\Scripts\Levels\Level2_air.cs" />
-     <Compile Include="Assets\Scripts\Levels\Wheel.cs" />
      <Compile Include="Assets\Scripts\Loader.cs" />
      <Compile Include="Assets\Scripts\Managers\EnemyManager.cs" />
      <Compile Include="Assets\Scripts\Managers\EventManager.cs" />

@@ -9,16 +9,14 @@ public class Smart_m : Enemy_infantry
     float BodyRadius;
     public float DodgeSpeed;
 
-
-
     void Start()
     {
         //Health = 30;
-        LinerVel = 1;
+        //LinerVel = 1;
         //JumpVel_min = 2f;
         //JumpVel_max = 10f;
         //JumpVel_med = 12f;
-        BalanceTorque = 10f;
+        //BalanceTorque = 10f;
 
         _box_col = GetComponent<BoxCollider2D>();
         BodyRadius = Mathf.Sqrt(Mathf.Abs(_box_col.size.x) + Mathf.Abs(_box_col.size.y))/2;

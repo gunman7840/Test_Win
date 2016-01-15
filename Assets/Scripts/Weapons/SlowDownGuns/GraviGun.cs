@@ -55,8 +55,8 @@ class GraviGun : Missile_GunType
         turret_base.position = c_transform.position;
         turret_base.rotation = Quaternion.AngleAxis(Base_angle, new Vector3(0, 0, 1)); // 0 0 1 это ось по которой идет вращение , то есть z
 
-        MinTurnAngle = Base_angle;
-        MaxTurnAngle = Base_angle + 180;
+        MinTurnAngle = Base_angle - 180;
+        MaxTurnAngle = Base_angle;
         RCScanner_pos = (Vector2)turret.position + new Vector2(Missile_pos_dist * Mathf.Cos((Base_angle - 90) * Mathf.Deg2Rad), Missile_pos_dist * Mathf.Sin((Base_angle - 90) * Mathf.Deg2Rad));
 
 
@@ -120,33 +120,5 @@ class GraviGun : Missile_GunType
         _graviSpaceTurret.OnDeActivate();
         StartCoroutine(Recharging());
     }
-
-    /*
-    protected IEnumerator ScanGravityArea()
-    {
-        while (true)
-        {
-            int layerMask = 1 << 9;
-            Missile_pos = (Vector2)c_transform.position + new Vector2(Missile_pos_dist * Mathf.Cos(targetHeading * Mathf.Deg2Rad), Missile_pos_dist * Mathf.Sin(targetHeading * Mathf.Deg2Rad));
-
-            //Debug.Log("GravityPoint " + Missile_pos + " " + GravityRadius);
-
-
-            AffectedEnemies = Physics2D.OverlapCircleAll(Missile_pos, GravityRadius, layerMask);
-            
-            foreach (Collider2D hitCollider in AffectedEnemies)
-            {
-                if (hitCollider.attachedRigidbody.tag == "Enemy")
-                {
-                    hitCollider.gameObject.SendMessage("SlowDown_message", 2);
-                    debugmanager.DrawDebugLine(Missile_pos, hitCollider.attachedRigidbody.position, Color.cyan);
-                }
-            }
-            
-            yield return new WaitForSeconds(1f);
-        }
-        
-    }
-    */
 
 }
