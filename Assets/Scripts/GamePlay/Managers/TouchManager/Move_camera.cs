@@ -96,14 +96,13 @@ public class Move_camera : MonoBehaviour
 
         if (touches.Length < 1)
         {
-            //uimanager.CloseGUIMethod();
             //if the camera is currently scrolling
             if (scrollVelocity != 0.0f)
             {
                 //slow down over time
                 float t = (Time.time - timeTouchPhaseEnded) / inertiaDuration;
                 float frameVelocity = Mathf.Lerp(scrollVelocity, 0.0f, t);
-                _camera.transform.position += -(Vector3)scrollDirection.normalized * (frameVelocity * 0.05f) * Time.deltaTime;
+                _camera.transform.position += -(Vector3)scrollDirection.normalized * (frameVelocity * 0.05f) * Time.deltaTime;  // Вот из за этой строчки камера иногда улетает далеко от карты, нужно поиграть с коэффициентом 0.05
 
                 if (t >= 1.0f)
                     scrollVelocity = 0.0f;
@@ -112,14 +111,13 @@ public class Move_camera : MonoBehaviour
 
         if (touches.Length ==1)
         {
-            //uimanager.CloseGUIMethod();
             //Single touch (move)
 
             if (touches[0].phase == TouchPhase.Began)
                 {
                     scrollVelocity = 0.0f;
                 }
-                else if (touches[0].phase == TouchPhase.Moved && (uimanager.BlockScreenMove != true))
+            else if (touches[0].phase == TouchPhase.Moved && (uimanager.BlockScreenMove != true))
                 {
                     Vector2 delta = touches[0].deltaPosition;
 
@@ -138,7 +136,7 @@ public class Move_camera : MonoBehaviour
                     if (scrollVelocity <= 100)
                         scrollVelocity = 0;
                 }
-                else if (touches[0].phase == TouchPhase.Ended)
+            else if (touches[0].phase == TouchPhase.Ended)
                 {
                     timeTouchPhaseEnded = Time.time;
                 }

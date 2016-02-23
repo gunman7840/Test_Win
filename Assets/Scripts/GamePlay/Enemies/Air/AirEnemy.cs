@@ -17,16 +17,12 @@ public abstract class AirEnemy : EnemyType
 
     //----Состояние объекта  
     protected Rigidbody2D rb;
-    protected Transform _transform;
     protected Vector2 vel;
     //protected int Global_direction;
     public bool isActive = true;
     public bool UnderAttack=false;
     //----Расчет траектории 
-    protected AirNavigation navigation;
     protected Vector2 TargetPoint = new Vector2(0, 0);
-    protected Path Trajectory;
-    protected TargetPoint NextTarget;
     protected float RouteTimer = 0f;
     protected float StuckTimer = 100f;
 
@@ -36,35 +32,22 @@ public abstract class AirEnemy : EnemyType
     protected int WarnVelProblem = 2;
     protected int CritVelProblem = 4;
 
-    //------События 
-    protected EventManager eventmanager;
-
-    //-----Debug 
-    protected DebugManager debugmanager;
-
-
-    protected void Start()
+    protected void Awake()
     {
-        //Debug.Log("Enemy awake");
+        //Debug.Log("AirEnemy awake");
         EnemyType_Awake();
         this.enabled = true;
-
         rb = GetComponent<Rigidbody2D>();
         _transform = transform;
-        debugmanager = GameObject.Find("DebugManager").GetComponent<DebugManager>();
-        eventmanager = GameObject.Find("Main Camera").GetComponent<EventManager>();
-
-        //Получаем первую траекторию
-        navigation = GameObject.Find("Main Camera").GetComponent<AirNavigation>(); //Получаем доступ к классу
-        NextTarget = navigation.GetStartPoint();
-        Trajectory = navigation.GetPath(NextTarget);
-
-        //Debug.Log("nav " + NextTarget.position + " " + Trajectory.PathName);
-
-
-        StartCoroutine(StuckCoroutine()); //работает ужасно
+        //StartCoroutine(StuckCoroutine()); //работает ужасно
     }
 
+    protected void AirEnemyOnSpawned()
+    {
+        EnemyTypeOnSpawned();
+        NextTarget = navigation.GetStartPoint(_transform.position, "air");
+        Trajectory = navigation.GetPath(NextTarget, "air");
+    }
     protected void Update()
     {
         if (!isActive)
@@ -89,11 +72,10 @@ public abstract class AirEnemy : EnemyType
 
     protected void TrajectoryDirecting()
     {
-        //Debug.Log("TrajectoryDirecting");
         //Переключаемся на след целевую точку
         if (Mathf.Abs(rb.position.x - NextTarget.position.x) < 0.5 && Mathf.Abs(rb.position.y - NextTarget.position.y) < 0.5)
         {
-            if (NextTarget == navigation.GetFinalTarget())
+            if (NextTarget.isFinalTarget == true)
             {
                 eventmanager.TargetReached(gameObject);
             }
@@ -158,9 +140,9 @@ public abstract class AirEnemy : EnemyType
         if (RouteTimer > CriticalRouteTimer)
         {
             //Debug.Log("PROBLEMS ---");
-            TargetPoint newpoint = navigation.GetTarget(transform.position, Trajectory, NextTarget);
+            TargetPoint newpoint = navigation.GetTarget(transform.position, NextTarget, "air");
             NextTarget = newpoint;
-            Trajectory = navigation.GetPath(NextTarget);
+            Trajectory = navigation.GetPath(NextTarget, "air");
             RouteTimer = 0f;
         }
     }

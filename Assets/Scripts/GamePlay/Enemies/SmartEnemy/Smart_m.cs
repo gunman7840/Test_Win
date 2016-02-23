@@ -5,7 +5,8 @@ using System.Collections.Generic;
 
 public class Smart_m : Enemy_infantry
 {
-    BoxCollider2D _box_col;
+    //BoxCollider2D _box_col;
+    protected Transform Dimensions;
     float BodyRadius;
     public float DodgeSpeed;
 
@@ -18,18 +19,27 @@ public class Smart_m : Enemy_infantry
         //JumpVel_med = 12f;
         //BalanceTorque = 10f;
 
-        _box_col = GetComponent<BoxCollider2D>();
-        BodyRadius = Mathf.Sqrt(Mathf.Abs(_box_col.size.x) + Mathf.Abs(_box_col.size.y))/2;
+        //_box_col = GetComponent<BoxCollider2D>();
+
+        foreach (Transform t in transform)
+        {
+            if (t.name == "GRight")
+            {
+                Dimensions = t;
+                break;
+            }
+        }
+        //BodyRadius = Mathf.Sqrt(Mathf.Abs(_box_col.size.x) + Mathf.Abs(_box_col.size.y))/2;
+        BodyRadius = Vector2.Distance(_transform.position, Dimensions.position);
 
     }
 
     void OnSpawned()
     {
+        EnemyInfantryOnSpawned();
         Health = 30;
         this.enabled = true;
         Alive = true;
-        NextTarget = navigation.GetStartPoint();
-        Trajectory = navigation.GetPath(NextTarget);
         gameObject.tag = "Enemy";
     }
 
@@ -54,9 +64,10 @@ public class Smart_m : Enemy_infantry
 
 
 
-        /*
+        //-------------------------------------------------------------
         //отрисовывает круг безопасности
-        for(float i=0;i<=360;i+=45f)
+        /*
+        for (float i=0;i<=360;i+=45f)
         {
             //Debug.Log("---" + i);
             ///Debug.Log("Mathf.Cos(i)" + Mathf.Cos(i*Mathf.Deg2Rad));
@@ -66,6 +77,7 @@ public class Smart_m : Enemy_infantry
             Debug.DrawLine(_transform.position, point, Color.red);
         }
         */
+        //-------------------------------------------------------------
 
         
         ProblemsDetector();

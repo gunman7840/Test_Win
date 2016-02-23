@@ -10,8 +10,10 @@ public class Path
     public string PathName;
     public List<TargetPoint> PointsList;
     public int PathPriority;
-    public int PathFails;
-    public int PathWins;
+    //public TargetPoint StartPoint;
+    //public TargetPoint FinishPoint;
+    //public int PathFails;
+    //public int PathWins;
 
     public Path(string _PathName, List<TargetPoint> _PointsList, int _PathPriority)
     {

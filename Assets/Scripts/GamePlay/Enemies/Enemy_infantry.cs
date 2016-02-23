@@ -15,15 +15,13 @@ public abstract class Enemy_infantry : EnemyType
     protected int LinerForce = 10;
     protected float JumpVel_min = 4f;
     protected float JumpVel_max = 10f;
-    protected float JumpVel_med = 8f;
+    //protected float JumpVel_med = 6f;
     protected float DeadBodytime = 5f;
     public float BalanceTorque;
-    //protected EnemyManager enemymanager;
-    
+
     //----Состояние объекта  
-    public Transform g0, gLeft, gRight, bleft0, bleft1, bright0, bright1, leftCast, rightCast;
+    public Transform g0, gLeft, gRight, bleft0, bleft1, bright0, bright1; //, leftCast, rightCast;
     protected Rigidbody2D rb;
-    protected Transform _transform;
     protected Vector2 vel;
     protected int Global_direction;
     protected bool isOnGround = false;
@@ -40,10 +38,7 @@ public abstract class Enemy_infantry : EnemyType
     protected float JumpV0 = 0f;
 
     //----Расчет траектории 
-    protected Navigation navigation;
     protected Vector2 TargetPoint = new Vector2(0, 0);
-    protected Path Trajectory;
-    protected TargetPoint NextTarget;
     protected float NextTarget_angle;
     protected float RouteTimer = 0f;
     protected float StuckTimer = 100f;
@@ -54,11 +49,7 @@ public abstract class Enemy_infantry : EnemyType
     protected int WarnVelProblem = 2;
     protected int CritVelProblem = 4;
 
-    //------События 
-    protected EventManager eventmanager;
 
-    //-----Debug 
-    protected DebugManager debugmanager;
 
 
     protected void Awake()
@@ -70,20 +61,17 @@ public abstract class Enemy_infantry : EnemyType
         Alive = true;
 
         rb = GetComponent<Rigidbody2D>();
-        _transform = transform;
-        debugmanager = GameObject.Find("DebugManager").GetComponent<DebugManager>();
-        eventmanager = GameObject.Find("Main Camera").GetComponent<EventManager>();
 
-        //Получаем первую траекторию
-        navigation = GameObject.Find("Main Camera").GetComponent<Navigation>(); //Получаем доступ к классу
-        NextTarget = navigation.GetStartPoint();
-        Trajectory = navigation.GetPath(NextTarget);
-
-        StartCoroutine(StuckCoroutine()); //работает ужасно
     }
 
-
-
+    protected void EnemyInfantryOnSpawned()
+    {
+        EnemyTypeOnSpawned();
+        NextTarget = navigation.GetStartPoint(_transform.position,"inf");
+        Trajectory = navigation.GetPath(NextTarget, "inf");
+        StartCoroutine(StuckCoroutine()); //работает ужасно
+    }
+    
     protected void Update()
     {
         if (!isActive)
@@ -93,12 +81,11 @@ public abstract class Enemy_infantry : EnemyType
         //H_Button = (bool)(Input.GetKey("h"));
         //if (H_Button)
         //  H_ButtonMethod();
-        //Debug.Log("health" + Health);
         if (Health<=0)
         {
             StartCoroutine(Die()); 
         }
-        //Debug.DrawLine(rb.position, NextTarget.position, Color.white);
+        Debug.DrawLine(rb.position, NextTarget.position, Color.white);
         vel = rb.velocity;  // Нужна для корректного движения по плоскости
         
         if (JumpAngle != 0f)
@@ -153,8 +140,7 @@ public abstract class Enemy_infantry : EnemyType
         {
 
             rb.velocity = new Vector2(rb.velocity.x* 0.2f , rb.velocity.y); // останавливаемся
-
-            if (NextTarget == navigation.GetFinalTarget())
+            if (NextTarget.isFinalTarget==true)
             {
                 eventmanager.TargetReached(gameObject);
             }
@@ -243,9 +229,9 @@ public abstract class Enemy_infantry : EnemyType
         Global_direction = direction;
         //Debug.Log("MoveForward");
         if (direction == 1 && NextTarget.edgeType == "hollow" )  //Прыгаем по параболе если: перед нами пропасть и точка приземления невысоко
-            ScanLandscape(rightCast.position, 1);
+            ScanLandscape( 1);
         else if (direction == -1 && NextTarget.edgeType == "hollow")
-            ScanLandscape(leftCast.position, -1);
+            ScanLandscape( -1);
         else if (direction == 2 && NextTarget.edgeType == "hollow" ) //добавил сюда hollow на случай если мы провалились в яму и пытаемся выбраться
            Jump(1);
         else if (direction == -2 && NextTarget.edgeType == "hollow" )
@@ -258,9 +244,10 @@ public abstract class Enemy_infantry : EnemyType
         */
         RelativeVel = new Vector2(vel.x, vel.y);
 
-        //Debug.Log("MoveForward rb.velocity " + rb.velocity +" SQRT " + Mathf.Sqrt(RelativeVel.x * RelativeVel.x + RelativeVel.y * RelativeVel.y) + "vel " + LinerVel);
+        //rb.velocity = new Vector2(Mathf.Lerp(0f, LinerVel * (direction / Mathf.Abs(direction)), LinerVel - vel.x), rb.velocity.y); //работает рывками
 
-        if (Mathf.Sqrt(RelativeVel.x * RelativeVel.x + RelativeVel.y * RelativeVel.y) < LinerVel)
+        
+        if (Mathf.Sqrt(RelativeVel.x * RelativeVel.x + RelativeVel.y * RelativeVel.y) < LinerVel || (RelativeVel.x/ Mathf.Abs(RelativeVel.x) != direction / Mathf.Abs(direction)))
         {
             /*
             //Эта секция отвечает за движение по кинематическим телам
@@ -278,8 +265,8 @@ public abstract class Enemy_infantry : EnemyType
             else
             */
             rb.velocity = new Vector2(vel.x + 3 * direction, rb.velocity.y);  //если он движется в другую сторону со скоростью выше модуля, то соответственно не может остановиться
-        }
-
+       }
+        
     }
 
     protected void Jump(int direction)
@@ -291,15 +278,15 @@ public abstract class Enemy_infantry : EnemyType
         }
     }
 
-    protected void ScanLandscape(Vector2 scanpoint, int direction)
+    protected void ScanLandscape(int direction)
     {
         //Debug.Log("ScanLandscape");
-        RaycastHit2D hit1 = Physics2D.Raycast(scanpoint, new Vector2(direction, -1),100, myLayerMask);
-        RaycastHit2D hit2 = Physics2D.Raycast(scanpoint, new Vector2(5f * direction, -2), 100, myLayerMask);
-        RaycastHit2D hit3 = Physics2D.Raycast(scanpoint, new Vector2(5f * direction, -1), 100, myLayerMask);
-        Debug.DrawLine(scanpoint, hit1.point, Color.cyan);
-        Debug.DrawLine(scanpoint, hit2.point, Color.cyan);
-        Debug.DrawLine(scanpoint, hit3.point, Color.cyan);
+        RaycastHit2D hit1 = Physics2D.Raycast(_transform.position, new Vector2(direction, -1),100, myLayerMask);
+        RaycastHit2D hit2 = Physics2D.Raycast(_transform.position, new Vector2(5f * direction, -2), 100, myLayerMask);
+        RaycastHit2D hit3 = Physics2D.Raycast(_transform.position, new Vector2(5f * direction, -1), 100, myLayerMask);
+        Debug.DrawLine(_transform.position, hit1.point, Color.cyan);
+        Debug.DrawLine(_transform.position, hit2.point, Color.cyan);
+        Debug.DrawLine(_transform.position, hit3.point, Color.cyan);
         //float tg = direction*  (hit2.point.y - hit1.point.y) / (hit2.point.x - hit1.point.x);
         float tg2 = direction * (hit3.point.y - hit2.point.y) / (hit3.point.x - hit2.point.x);
         //float angle = Mathf.Atan(tg);
@@ -327,7 +314,7 @@ public abstract class Enemy_infantry : EnemyType
         Vector2 target = new Vector2(Mathf.Abs(rb.position.x - point.x), point.y); //Берем абсолютное значение по оси y, чтобы считать углы для точек которые находятся внизу
         float _angle = 0f;
         float FinalJumpVel = 0f;
-        for (float V0 = JumpVel_min; V0 <= JumpVel_max; V0 = V0 + 2f) //Пытаемся расчитать угол для нескольких начальных скоростей, от минимальной к максимальной
+        for (float V0 = JumpVel_min; V0 <= JumpVel_max; V0 = V0 + 0.5f) //Пытаемся расчитать угол для нескольких начальных скоростей, от минимальной к максимальной
         {
             float tg1 = (Mathf.Pow(V0, 2) + Mathf.Sqrt(Mathf.Pow(V0, 4) - gravity * (gravity * Mathf.Pow(target.x, 2) + 2 * Mathf.Pow(V0, 2) * (target.y - rb.position.y)))) / (gravity * target.x);
             //float tg2 = (Mathf.Pow(V0, 2) - Mathf.Sqrt(Mathf.Pow(V0, 4) - gravity * (gravity * Mathf.Pow(target.x, 2) + 2 * Mathf.Pow(V0, 2) * target.y - rb.position.y))) / (gravity * target.x);
@@ -386,9 +373,8 @@ public abstract class Enemy_infantry : EnemyType
         if (RouteTimer > CriticalRouteTimer)
         {
             //Debug.Log("PROBLEMS ---");
-            TargetPoint newpoint = navigation.GetTarget(transform.position, Trajectory, NextTarget);
-            NextTarget = newpoint;
-            Trajectory = navigation.GetPath(NextTarget);
+            NextTarget = navigation.GetTarget(transform.position, NextTarget, "inf");
+            Trajectory = navigation.GetPath(NextTarget,"inf");
             RouteTimer = 0f;
         }
     }
@@ -471,12 +457,10 @@ public abstract class Enemy_infantry : EnemyType
     {
         while (true)
         {
-
             yield return new WaitForSeconds(slow_effect_length);
             //LinerVel = _vel;
             this.enabled = true;
-            yield return null;
-            
+            yield return null;   
         }
     }
 
