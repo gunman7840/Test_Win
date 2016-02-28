@@ -18,7 +18,7 @@ public class Move_camera : MonoBehaviour
 
     private Vector3 mouseOrigin;    // Position of cursor when mouse dragging starts
     private bool isPanning;     // Is the camera being panned?
-
+    private float Padding = 0.5f;
 
     //-----moved from script
     public float moveSensitivityX = 1f;
@@ -36,16 +36,37 @@ public class Move_camera : MonoBehaviour
     {
         _camera = Camera.main;
         _transform = transform;
+        //-----------Подгонка масштаба карты под размер экрана
+        float ScreenRatio = (float)Screen.width / (float)Screen.height; //без кастов всегда возвращает единицу
+        float mapWidth = bound_max.transform.position.x - bound_min.transform.position.x;
+        float mapHeight = bound_max.transform.position.y - bound_min.transform.position.y;
+        float DesiredVisibleX = mapWidth * 0.75f; //мы всегда хоти вижеть 75% ширины карты, независимо от соотношения сторон экрана
+        float OrtSize = DesiredVisibleX / (2 * ScreenRatio);
+        _camera.orthographicSize = OrtSize;
 
+        Camera_extent = new Vector3(_camera.orthographicSize * ((float)Screen.width / (float)Screen.height), _camera.orthographicSize, 0); //чтобы в min & max упирался не центр камеры а ее край
+        /*
+        Debug.Log("Screen.width " + Screen.width);
+        Debug.Log("Screen.height " + Screen.height);
 
-        //verticalExtent = _camera.orthographicSize;
-        //horizontalExtent = _camera.orthographicSize * Screen.width / Screen.height;
-        Camera_extent = new Vector3(_camera.orthographicSize * Screen.width / Screen.height, _camera.orthographicSize,0);
-        _min = bound_min.transform.position  + Camera_extent;
-        _max = bound_max.transform.position  - Camera_extent;
+        Debug.Log("ScreenRatio " + ScreenRatio);
+        Debug.Log("DesiredVisibleX " + DesiredVisibleX);
+        Debug.Log("DesiredVisibleX / 2 * ScreenRatio " + DesiredVisibleX / 2 * ScreenRatio);
+        */
 
-        //Debug.Log("min" + _min);
-        //Debug.Log("max" + _max);
+        if(OrtSize * 2> mapHeight) // это актуально при шировких экранах  типа айпада
+        {
+            _min = new Vector2(-Padding, -(OrtSize * 2 - mapHeight) / 2) + (Vector2)Camera_extent;
+            _max = new Vector2(mapWidth + Padding, (OrtSize * 2 - mapHeight) / 2 + mapHeight) - (Vector2)Camera_extent;
+        }
+        else //это актуально на длинных экранах
+        {
+            _min = (Vector2)bound_min.transform.position + new Vector2(-Padding, -Padding) + (Vector2)Camera_extent;
+            _max = (Vector2)bound_max.transform.position + new Vector2(Padding, Padding) - (Vector2)Camera_extent;
+        }
+
+        //Debug.Log("min " + ((Vector2)_min - (Vector2)Camera_extent));
+        //Debug.Log("max " + ((Vector2)_max + (Vector2)Camera_extent));
 
         uimanager = GameObject.Find("UIManager").GetComponent<UIManager>();
     }
@@ -100,12 +121,12 @@ public class Move_camera : MonoBehaviour
             if (scrollVelocity != 0.0f)
             {
                 //slow down over time
-                float t = (Time.time - timeTouchPhaseEnded) / inertiaDuration;
-                float frameVelocity = Mathf.Lerp(scrollVelocity, 0.0f, t);
-                _camera.transform.position += -(Vector3)scrollDirection.normalized * (frameVelocity * 0.05f) * Time.deltaTime;  // Вот из за этой строчки камера иногда улетает далеко от карты, нужно поиграть с коэффициентом 0.05
+                //float t = (Time.time - timeTouchPhaseEnded) / inertiaDuration;
+                //float frameVelocity = Mathf.Lerp(scrollVelocity, 0.0f, t);
+                //_camera.transform.position += -(Vector3)scrollDirection.normalized * (frameVelocity * 0.05f) * Time.deltaTime;  // Вот из за этой строчки камера иногда улетает далеко от карты, нужно поиграть с коэффициентом 0.05
 
-                if (t >= 1.0f)
-                    scrollVelocity = 0.0f;
+                //if (t >= 1.0f)
+                  //  scrollVelocity = 0.0f;
             }
         }
 

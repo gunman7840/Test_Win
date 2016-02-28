@@ -14,7 +14,7 @@ public abstract class Enemy_infantry : EnemyType
     public float LinerVel = 0f;
     protected int LinerForce = 10;
     protected float JumpVel_min = 4f;
-    protected float JumpVel_max = 10f;
+    protected float JumpVel_max = 12f;
     //protected float JumpVel_med = 6f;
     protected float DeadBodytime = 5f;
     public float BalanceTorque;

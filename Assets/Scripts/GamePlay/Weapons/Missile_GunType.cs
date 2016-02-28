@@ -20,8 +20,6 @@ abstract class Missile_GunType : WeaponType
     protected string turret_pr_name= "Turret_prefab";
     protected string turret_base_pr_name= "Turret_base_prefab";
 
-    //protected Transform c_transform;
-
     //------- Поворот
     protected float MinTurnAngle;
     protected float MaxTurnAngle;
@@ -130,8 +128,6 @@ abstract class Missile_GunType : WeaponType
         ReadyToShoot = true; 
     }
 
-    
-    
     protected IEnumerator ScanArea()
     {
         while (true)

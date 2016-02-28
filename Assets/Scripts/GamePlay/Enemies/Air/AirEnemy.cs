@@ -77,6 +77,7 @@ public abstract class AirEnemy : EnemyType
         {
             if (NextTarget.isFinalTarget == true)
             {
+                Debug.Log("reached ");
                 eventmanager.TargetReached(gameObject);
             }
             int i = 0;
