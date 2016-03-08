@@ -9,22 +9,20 @@ public abstract class Enemy_infantry : EnemyType
 
     //-----Конфигурация
 
-    //public LayerMask myLayerMask ;
     protected float gravity = 9.8f;
-    public float LinerVel = 0f;
+    public float LinerVel;
     protected int LinerForce = 10;
     protected float JumpVel_min = 4f;
     protected float JumpVel_max = 12f;
-    //protected float JumpVel_med = 6f;
     protected float DeadBodytime = 5f;
     public float BalanceTorque;
 
     //----Состояние объекта  
     public Transform g0, gLeft, gRight, bleft0, bleft1, bright0, bright1; //, leftCast, rightCast;
     protected Rigidbody2D rb;
-    protected Vector2 vel;
+    //public Vector2 vel; //к ней нужен доступ из башен, чтобы стрелять на опережение
     protected int Global_direction;
-    protected bool isOnGround = false;
+    //public bool isOnGround = false; //нужен доступ из башен, чтобы не стрелять на опережение во время прыжков
     protected int isOnGroundJumpCounter = 0;
     protected bool isOnMovingBody = false;
     protected Vector2 MovingBodySpeed;
@@ -44,7 +42,7 @@ public abstract class Enemy_infantry : EnemyType
     protected float StuckTimer = 100f;
 
     //-------Обработка проблем при движении 
-    protected float CriticalRouteTimer = 17f;
+    protected float CriticalRouteTimer = 30f;
     protected int VelProblemCounter=0;
     protected int WarnVelProblem = 2;
     protected int CritVelProblem = 4;
@@ -70,6 +68,7 @@ public abstract class Enemy_infantry : EnemyType
         NextTarget = navigation.GetStartPoint(_transform.position,"inf");
         Trajectory = navigation.GetPath(NextTarget, "inf");
         StartCoroutine(StuckCoroutine()); //работает ужасно
+        //Debug.Log("Trajectory " + Trajectory.PathName);
     }
     
     protected void Update()
@@ -85,7 +84,8 @@ public abstract class Enemy_infantry : EnemyType
         {
             StartCoroutine(Die()); 
         }
-        Debug.DrawLine(rb.position, NextTarget.position, Color.white);
+
+        //Debug.DrawLine(rb.position, NextTarget.position, Color.white);
         vel = rb.velocity;  // Нужна для корректного движения по плоскости
         
         if (JumpAngle != 0f)
@@ -247,26 +247,34 @@ public abstract class Enemy_infantry : EnemyType
         //rb.velocity = new Vector2(Mathf.Lerp(0f, LinerVel * (direction / Mathf.Abs(direction)), LinerVel - vel.x), rb.velocity.y); //работает рывками
 
         
-        if (Mathf.Sqrt(RelativeVel.x * RelativeVel.x + RelativeVel.y * RelativeVel.y) < LinerVel || (RelativeVel.x/ Mathf.Abs(RelativeVel.x) != direction / Mathf.Abs(direction)))
+//        if (Mathf.Sqrt(RelativeVel.x * RelativeVel.x + RelativeVel.y * RelativeVel.y) < LinerVel || (RelativeVel.x/ Mathf.Abs(RelativeVel.x) != direction / Mathf.Abs(direction)))
+        if (Mathf.Sqrt(RelativeVel.x * RelativeVel.x + RelativeVel.y * RelativeVel.y) < LinerVel || (RelativeVel.x / Mathf.Abs(RelativeVel.x) != direction / Mathf.Abs(direction)))
         {
-            /*
-            //Эта секция отвечает за движение по кинематическим телам
+                /*
+                //Эта секция отвечает за движение по кинематическим телам
 
-            RaycastHit2D hit01 = Physics2D.Linecast(bleft0.position, bleft1.position);
-            RaycastHit2D hit02 = Physics2D.Linecast(bright0.position, bright1.position);
-            if (hit01.rigidbody != null && hit02.rigidbody != null)  //Нужен этот if , потому что у земли не определяется rigidbody и сыпятся ошибки
-            {
-                if ((hit01.rigidbody.isKinematic == false && direction == 1) || (hit02.rigidbody.isKinematic == false && direction == -1))
+                RaycastHit2D hit01 = Physics2D.Linecast(bleft0.position, bleft1.position);
+                RaycastHit2D hit02 = Physics2D.Linecast(bright0.position, bright1.position);
+                if (hit01.rigidbody != null && hit02.rigidbody != null)  //Нужен этот if , потому что у земли не определяется rigidbody и сыпятся ошибки
                 {
-                    //Debug.Log("CONTACT");
-                    rb.AddForce(new Vector2(LinerForce * direction, 0));
+                    if ((hit01.rigidbody.isKinematic == false && direction == 1) || (hit02.rigidbody.isKinematic == false && direction == -1))
+                    {
+                        //Debug.Log("CONTACT");
+                        rb.AddForce(new Vector2(LinerForce * direction, 0));
+                    }
                 }
-            }
-            else
-            */
-            rb.velocity = new Vector2(vel.x + 3 * direction, rb.velocity.y);  //если он движется в другую сторону со скоростью выше модуля, то соответственно не может остановиться
+                else
+                */
+                float t = 1 - Mathf.Abs(vel.x)/ LinerVel;
+           // Debug.Log("vel.x " + vel.x);
+           // Debug.Log("t " + t);
+           // Debug.Log("Mathf.Lerp(0,LinerVel, t) " + Mathf.Lerp(0, LinerVel, t));
+
+            rb.velocity = new Vector2(Mathf.Lerp(0,LinerVel, t) * direction, rb.velocity.y);  //все равно дергается
+
+            //rb.velocity = new Vector2(vel.x + 3 * direction, rb.velocity.y);  
        }
-        
+       
     }
 
     protected void Jump(int direction)
@@ -284,9 +292,9 @@ public abstract class Enemy_infantry : EnemyType
         RaycastHit2D hit1 = Physics2D.Raycast(_transform.position, new Vector2(direction, -1),100, myLayerMask);
         RaycastHit2D hit2 = Physics2D.Raycast(_transform.position, new Vector2(5f * direction, -2), 100, myLayerMask);
         RaycastHit2D hit3 = Physics2D.Raycast(_transform.position, new Vector2(5f * direction, -1), 100, myLayerMask);
-        Debug.DrawLine(_transform.position, hit1.point, Color.cyan);
-        Debug.DrawLine(_transform.position, hit2.point, Color.cyan);
-        Debug.DrawLine(_transform.position, hit3.point, Color.cyan);
+        //Debug.DrawLine(_transform.position, hit1.point, Color.cyan);
+        //Debug.DrawLine(_transform.position, hit2.point, Color.cyan);
+        //Debug.DrawLine(_transform.position, hit3.point, Color.cyan);
         //float tg = direction*  (hit2.point.y - hit1.point.y) / (hit2.point.x - hit1.point.x);
         float tg2 = direction * (hit3.point.y - hit2.point.y) / (hit3.point.x - hit2.point.x);
         //float angle = Mathf.Atan(tg);
@@ -352,7 +360,6 @@ public abstract class Enemy_infantry : EnemyType
         return true;
     }
 
-
     //-----------------------------------------------------------
 
     public void SettoSleep()
@@ -373,7 +380,7 @@ public abstract class Enemy_infantry : EnemyType
         if (RouteTimer > CriticalRouteTimer)
         {
             //Debug.Log("PROBLEMS ---");
-            NextTarget = navigation.GetTarget(transform.position, NextTarget, "inf");
+            NextTarget = navigation.GetTarget(_transform.position, NextTarget, "inf");
             Trajectory = navigation.GetPath(NextTarget,"inf");
             RouteTimer = 0f;
         }
@@ -392,10 +399,10 @@ public abstract class Enemy_infantry : EnemyType
                 {
                     if (VelProblemCounter >= CritVelProblem)
                     {
-                        Debug.Log("--------------------------------------------------destroy----");
+                       // Debug.Log("--------------------------------------------------destroy----");
                         Destroy(gameObject);
                     }
-                    Debug.Log("---------------------------------------------------STUCK-----------------------------------------------");
+                    //Debug.Log("---------------------------------------------------STUCK-----------------------------------------------");
                     //JumpAngle = random.Next(80, 100);
                     //JumpV0 = 4f; 
                 }

@@ -17,7 +17,7 @@ public abstract class AirEnemy : EnemyType
 
     //----Состояние объекта  
     protected Rigidbody2D rb;
-    protected Vector2 vel;
+    //protected Vector2 vel;
     //protected int Global_direction;
     public bool isActive = true;
     public bool UnderAttack=false;

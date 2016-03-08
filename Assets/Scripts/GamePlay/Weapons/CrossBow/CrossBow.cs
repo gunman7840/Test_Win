@@ -8,12 +8,12 @@ class CrossBow : Missile_GunType
 
     void Awake()
     {
-        MissileSpeed = 15;
-        Missile_pos_dist =1;
-        DetectRadius = 6;
     }
 
-
+    void OnSpawned()
+    {
+        Missile_GunType_OnSpawned();
+    }
 
     protected override void Shoot()
     {

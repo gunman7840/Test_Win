@@ -18,7 +18,7 @@ using System.Linq;
         
         void Start()
         {
-            Destroy(gameObject, 2f);
+            Destroy(gameObject, 1f);
         }
 
         void Update()

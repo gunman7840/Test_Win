@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-abstract class Missile_GunType : WeaponType
+abstract class Missile_GunType_noLock : WeaponType
 {
 
     Collider2D[] hitColliders;
@@ -17,8 +17,8 @@ abstract class Missile_GunType : WeaponType
     protected Transform missile;
     protected Transform turret;
     protected Transform turret_base;
-    protected string turret_pr_name= "Turret_prefab";
-    protected string turret_base_pr_name= "Turret_base_prefab";
+    protected string turret_pr_name = "Turret_prefab";
+    protected string turret_base_pr_name = "Turret_base_prefab";
 
     //------- Поворот
     protected float MinTurnAngle;
@@ -31,18 +31,18 @@ abstract class Missile_GunType : WeaponType
     protected GameObject currentTarget;
     protected Transform currentTargetTransform;
     protected EnemyType currentTargetState;
-    protected bool TargetLock=false;
+    protected bool TargetLock = false;
 
     //--------Стрельба
-    public float MissileSpeed ;
-    public int DetectRadius ;
+    public float MissileSpeed;
+    public int DetectRadius;
     public float Missile_pos_dist;
     public float RechargeTime;
 
     protected Vector2 Missile_pos;
     protected Vector2 RCScanner_pos;  // точка на конце ствола, из нее строим рейкасты до цели 
-    protected bool TakeToAim =false;  // вроде используется только в гравипушке, там мы не обновляли скрипты
-    protected bool ReadyToShoot = true;  
+    protected bool TakeToAim = false;  // вроде используется только в гравипушке, там мы не обновляли скрипты
+    protected bool ReadyToShoot = true;
     //-----Debug 
     protected DebugManager debugmanager;
 
@@ -75,7 +75,7 @@ abstract class Missile_GunType : WeaponType
         turret_base.rotation = Quaternion.AngleAxis(Base_angle, new Vector3(0, 0, 1)); // 0 0 1 это ось по которой идет вращение , то есть z
 
         MinTurnAngle = Base_angle - 180;
-        MaxTurnAngle = Base_angle ;
+        MaxTurnAngle = Base_angle;
         RCScanner_pos = (Vector2)turret.position + new Vector2(Missile_pos_dist * Mathf.Cos((Base_angle - 90) * Mathf.Deg2Rad), Missile_pos_dist * Mathf.Sin((Base_angle - 90) * Mathf.Deg2Rad));
 
 
@@ -88,9 +88,9 @@ abstract class Missile_GunType : WeaponType
     {
         //Debug.Log("Missile_GunType_OnSpawned");
         if (isReused)
-        { 
-        StartCoroutine(ScanArea());
-        ReadyToShoot = true;
+        {
+            StartCoroutine(ScanArea());
+            ReadyToShoot = true;
         }
     }
 
@@ -99,7 +99,6 @@ abstract class Missile_GunType : WeaponType
         //ScanArea();
         if (currentTarget == null)
             TargetLock = false; //если цель исчезла из памяти , например по итогам StuckCourutine
-
         if (TargetLock)
         {
             if (turret.eulerAngles.z != targetHeading)
@@ -107,8 +106,8 @@ abstract class Missile_GunType : WeaponType
                 Quaternion q = Quaternion.AngleAxis(targetHeading, Vector3.forward); // то же что Vector3(0, 0, 1)
                 turret.rotation = Quaternion.RotateTowards(turret.rotation, q, Time.deltaTime * TurnSpeed);
             }
-          
-            if (ReadyToShoot && ((turret.eulerAngles.z - targetHeading < 0.3 && turret.eulerAngles.z - targetHeading > -0.3) || (turret.eulerAngles.z - 360f - targetHeading < 0.3 && turret.eulerAngles.z - 360f - targetHeading > -0.3))) 
+
+            if (ReadyToShoot && ((turret.eulerAngles.z - targetHeading < 0.3 && turret.eulerAngles.z - targetHeading > -0.3) || (turret.eulerAngles.z - 360f - targetHeading < 0.3 && turret.eulerAngles.z - 360f - targetHeading > -0.3)))
             {
                 RaycastHit2D hit = Physics2D.Linecast(RCScanner_pos, currentTargetTransform.position, myLayerMask); //Если он захватил цель , то продолжает вести ее и после того как она скрылась за углом, поэтому нужен рэйкаст
                 //debugmanager.DrawDebugLine(turret.position, currentTargetTransform.position, Color.cyan);
@@ -118,27 +117,27 @@ abstract class Missile_GunType : WeaponType
                     Shoot();
                     ReadyToShoot = false;
                     StartCoroutine(Recharging());
+                    TargetLock = false; //разу ищем новую цель
                 }
                 else
                 {
                     TargetLock = false;// цель скрылась за преградой, ищем новую
-                }   
+                }
             }
         }
         else
         {
             //random move
         }
-        
+
     }
 
 
-    
-    protected IEnumerator ScanArea()
+    protected  IEnumerator ScanArea()
     {
         while (true)
         {
-            //Debug.Log("ScanArea");
+            //Debug.Log("TargetLock " + TargetLock);
             if (!TargetLock) //Ищем только если мы не ведем цель в данный момент
             {
                 DetectEnemy(DetectRadius);
@@ -147,10 +146,10 @@ abstract class Missile_GunType : WeaponType
             {
                 if (currentTargetTransform != null)
                 {
-                    //Debug.DrawLine(turret.position, currentTargetTransform.position, Color.white);
+                   // Debug.DrawLine(turret.position, currentTargetTransform.position, Color.white); //-------------------------------------------------------
                 }
                 //эта строка ломается если враг исчез например через stuckcourutine
-                float distance=Vector2.Distance(currentTargetTransform.position,turret.position);
+                float distance = Vector2.Distance(currentTargetTransform.position, turret.position);
                 //debugmanager.DrawDebugLine(RCScanner_pos, currentTargetTransform.position, Color.red);
                 if (distance < DetectRadius && currentTarget.tag == "Enemy") //оставить проверку тэга иначе ломается
                 {
@@ -250,5 +249,5 @@ abstract class Missile_GunType : WeaponType
     {
         //Debug.Log("Shoot base");
     }
-    
+
 }

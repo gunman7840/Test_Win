@@ -2,8 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 
-class GraviGun : Missile_GunType
+class GraviGun : Area_GunType
 {
+
+
     private bool ActiveState=false;
     private BoxCollider2D GravityArea;
     //private Transform GravityPoint;
@@ -16,9 +18,6 @@ class GraviGun : Missile_GunType
 
     void Awake()
     {
-        MissileSpeed = 15;
-        Missile_pos_dist = 2;
-        DetectRadius = 6;
         turret_pr_name = "GrviGun_turret";
         turret_base_pr_name = "Turret_base_prefab";
 

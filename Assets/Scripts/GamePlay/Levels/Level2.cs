@@ -27,7 +27,7 @@ public class Level2 : MonoBehaviour, ILevel
     void Awake()
     {
         //Debug.Log("level awake");
-        path1 = new Path("Path1", FillPointsList(path1_points, _tp_Array), 10);
+        path1 = new Path("Path1", FillPointsList(path1_points, _tp_Array), 6);
         path2 = new Path("Path2", FillPointsList(path2_points, _tp_Array), 5);
         path3 = new Path("Path3", FillPointsList(path3_points, _tp_Array), 5);
         _pathlist.Add(path1);

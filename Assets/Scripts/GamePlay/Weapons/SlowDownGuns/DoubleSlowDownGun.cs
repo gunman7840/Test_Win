@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-class DoubleSlowDownGun : Missile_GunType
+class DoubleSlowDownGun : Missile_GunType_noLock
 {
     //private Transform missile;
 
@@ -14,13 +14,8 @@ class DoubleSlowDownGun : Missile_GunType
 
     void Awake()
     {
-        MissileSpeed = 15;
-        Missile_pos_dist = 2;
-        DetectRadius = 6;
         turret_pr_name = "Turret_prefab_SlowDown";
         turret_base_pr_name = "Turret_base_prefab";
-
-
     }
 
 

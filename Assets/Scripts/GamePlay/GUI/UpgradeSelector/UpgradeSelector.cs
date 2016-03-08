@@ -22,13 +22,14 @@ public class UpgradeSelector : MonoBehaviour
 
     void Awake()
     {
+        /*
         if (instance == null)
             instance = this;
         else if (instance != this)
             Destroy(gameObject);
 
         DontDestroyOnLoad(gameObject);
-        
+        */
         //----------------------
       
     }
@@ -49,6 +50,10 @@ public class UpgradeSelector : MonoBehaviour
     public void MoveandAppeare(Transform gun_tr, int gun_id)
     {
         //Debug.Log("US " + gun_tr + gun_id);
+        if (weaponmanager.CheckWeaponAvailability(gun_id) == false)
+        {
+            //здесь нужно отключить кнопку апгрейда, но не знаю как это сделать лучше. Потом ее надо включить
+        }
 
         gameObject.SetActive(true);
         _transform.position = new Vector3(gun_tr.position.x, gun_tr.position.y, _transform.position.z);

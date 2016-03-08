@@ -77,6 +77,7 @@
      <Compile Include="Assets\Scripts\GamePlay\Levels\ILevel.cs" />
      <Compile Include="Assets\Scripts\GamePlay\Levels\Level2.cs" />
      <Compile Include="Assets\Scripts\GamePlay\Levels\Level3.cs" />
+     <Compile Include="Assets\Scripts\GamePlay\Levels\Level3_1.cs" />
      <Compile Include="Assets\Scripts\GamePlay\Levels\StageLevel.cs" />
      <Compile Include="Assets\Scripts\GamePlay\Managers\EnemyManager.cs" />
      <Compile Include="Assets\Scripts\GamePlay\Managers\EventManager.cs" />
@@ -84,6 +85,7 @@
      <Compile Include="Assets\Scripts\GamePlay\Managers\TouchManager\Move_camera.cs" />
      <Compile Include="Assets\Scripts\GamePlay\Managers\UIManager.cs" />
      <Compile Include="Assets\Scripts\GamePlay\Managers\WeaponManager.cs" />
+     <Compile Include="Assets\Scripts\GamePlay\Weapons\Area_GunType.cs" />
      <Compile Include="Assets\Scripts\GamePlay\Weapons\CrossBow\Arrow.cs" />
      <Compile Include="Assets\Scripts\GamePlay\Weapons\CrossBow\CrossBow.cs" />
      <Compile Include="Assets\Scripts\GamePlay\Weapons\CrossBow\Triple_CrossBow.cs" />
@@ -93,6 +95,7 @@
      <Compile Include="Assets\Scripts\GamePlay\Weapons\HeavyGuns\ShrapnelMissile.cs" />
      <Compile Include="Assets\Scripts\GamePlay\Weapons\HeavyGuns\VacuumMissile.cs" />
      <Compile Include="Assets\Scripts\GamePlay\Weapons\Missile_GunType.cs" />
+     <Compile Include="Assets\Scripts\GamePlay\Weapons\Missile_GunType_noLock.cs" />
      <Compile Include="Assets\Scripts\GamePlay\Weapons\Platforms.cs" />
      <Compile Include="Assets\Scripts\GamePlay\Weapons\SawGun\Saw2.cs" />
      <Compile Include="Assets\Scripts\GamePlay\Weapons\SawGun\Saw3.cs" />

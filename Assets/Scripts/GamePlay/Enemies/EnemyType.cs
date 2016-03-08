@@ -10,6 +10,9 @@ public abstract class EnemyType : MonoBehaviour
     protected EnemyManager enemymanager;
     protected LayerMask myLayerMask;
     protected Transform _transform;
+    public Vector2 vel; //к ней нужен доступ из башен, чтобы стрелять на опережение
+    public bool isOnGround = false; //нужен доступ из башен, чтобы не стрелять на опережение во время прыжков
+
 
 
     //Рассчет траектории
