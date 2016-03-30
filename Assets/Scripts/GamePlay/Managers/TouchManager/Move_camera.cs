@@ -37,14 +37,14 @@ public class Move_camera : MonoBehaviour
         _camera = Camera.main;
         _transform = transform;
         //-----------Подгонка масштаба карты под размер экрана
-        float ScreenRatio = (float)Screen.width / (float)Screen.height; //без кастов всегда возвращает единицу
+        float ScreenRatio = (float)Screen.width / (float)Screen.height;
         float mapWidth = bound_max.transform.position.x - bound_min.transform.position.x;
         float mapHeight = bound_max.transform.position.y - bound_min.transform.position.y;
         float DesiredVisibleX = mapWidth * 0.75f; //мы всегда хоти вижеть 75% ширины карты, независимо от соотношения сторон экрана
         float OrtSize = DesiredVisibleX / (2 * ScreenRatio);
         _camera.orthographicSize = OrtSize;
 
-        Camera_extent = new Vector3(_camera.orthographicSize * ((float)Screen.width / (float)Screen.height), _camera.orthographicSize, 0); //чтобы в min & max упирался не центр камеры а ее край
+        Camera_extent = new Vector3(_camera.orthographicSize * ScreenRatio, _camera.orthographicSize, 0); //чтобы в min & max упирался не центр камеры а ее край
         /*
         Debug.Log("Screen.width " + Screen.width);
         Debug.Log("Screen.height " + Screen.height);

@@ -35,9 +35,7 @@ abstract class Missile_GunType : WeaponType
 
     //--------Стрельба
     public float MissileSpeed ;
-    public int DetectRadius ;
     public float Missile_pos_dist;
-    public float RechargeTime;
 
     protected Vector2 Missile_pos;
     protected Vector2 RCScanner_pos;  // точка на конце ствола, из нее строим рейкасты до цели 
@@ -96,7 +94,8 @@ abstract class Missile_GunType : WeaponType
 
     void Update()
     {
-        //ScanArea();
+        //Debug.Log("desc " + description);
+
         if (currentTarget == null)
             TargetLock = false; //если цель исчезла из памяти , например по итогам StuckCourutine
 

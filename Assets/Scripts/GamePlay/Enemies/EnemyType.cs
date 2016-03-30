@@ -4,39 +4,48 @@ using System.Collections.Generic;
 
 public abstract class EnemyType : MonoBehaviour
 {
+    //------Параметры
     public int id;
     public float Health;
     public string type; //air/land
-    protected EnemyManager enemymanager;
+    public int cost;
     protected LayerMask myLayerMask;
+
+
+    //----Состояние
     protected Transform _transform;
     public Vector2 vel; //к ней нужен доступ из башен, чтобы стрелять на опережение
     public bool isOnGround = false; //нужен доступ из башен, чтобы не стрелять на опережение во время прыжков
+    public bool Alive = true;
+    protected float DeadBodytime = 5f;
+
+    //-----Ссылки
+    private Camera _camera;
+    //protected ResourceManager resourceManager;
+    protected EventManager eventmanager;
+    protected DebugManager debugmanager;
+    protected EnemyManager enemymanager;
+    protected Navigation navigation;
 
 
 
     //Рассчет траектории
     public TargetPoint NextTarget;  //Устанавливает из вне при спауне
     protected Path Trajectory;
-    protected Navigation navigation;
 
-    //------События 
-    protected EventManager eventmanager;
-
-    //-----Debug 
-    protected DebugManager debugmanager;
 
 
     protected void EnemyType_Awake()
     {
         //Debug.Log("enemy type awake");
         _transform = transform;
-        enemymanager = GameObject.Find("Main Camera").GetComponent<EnemyManager>();
-        debugmanager = GameObject.Find("DebugManager").GetComponent<DebugManager>();
-        eventmanager = GameObject.Find("Main Camera").GetComponent<EventManager>();
+        _camera = GameObject.Find("Main Camera").GetComponent<Camera>();
 
-        //Получаем первую траекторию
-        navigation = GameObject.Find("Main Camera").GetComponent<Navigation>(); //Получаем доступ к классу
+        enemymanager = _camera.GetComponent<EnemyManager>();
+        debugmanager = GameObject.Find("DebugManager").GetComponent<DebugManager>();
+        eventmanager = _camera.GetComponent<EventManager>();
+        //resourceManager = _camera.GetComponent<ResourceManager>();
+        navigation = _camera.GetComponent<Navigation>(); //Получаем доступ к классу
 
         myLayerMask = enemymanager.myLayerMask;
 
@@ -48,5 +57,24 @@ public abstract class EnemyType : MonoBehaviour
         //NextTarget = navigation.GetStartPoint(_transform.position);
         //Trajectory = navigation.GetPath(NextTarget);
      }
+
+    public void ApplyDamage(int points)
+    {
+        //Debug.Log("ApplyDamage " + points);
+        Health -= points;
+    }
+
+    protected IEnumerator Die()
+    {
+        eventmanager.CallOnDestroyEnemy_cost(cost);
+        this.enabled = false;
+        Alive = false;
+        gameObject.tag = "Dead";
+
+        yield return new WaitForSeconds(DeadBodytime);
+
+        eventmanager.CallOnDestroyEnemy(_transform);
+
+    }
 
 }

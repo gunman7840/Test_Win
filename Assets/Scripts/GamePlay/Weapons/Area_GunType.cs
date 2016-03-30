@@ -36,8 +36,6 @@ abstract class Area_GunType : WeaponType
     protected Vector2 Missile_pos;
     protected Vector2 RCScanner_pos;  // точка на конце ствола, из нее строим рейкасты до цели 
     public float MissileSpeed;
-    public float RechargeTime;
-    public int DetectRadius;
     protected bool TakeToAim = false;
     protected bool ReadyToShoot = true;
 

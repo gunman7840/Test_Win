@@ -14,7 +14,6 @@ public abstract class Enemy_infantry : EnemyType
     protected int LinerForce = 10;
     protected float JumpVel_min = 4f;
     protected float JumpVel_max = 12f;
-    protected float DeadBodytime = 5f;
     public float BalanceTorque;
 
     //----Состояние объекта  
@@ -28,7 +27,6 @@ public abstract class Enemy_infantry : EnemyType
     protected Vector2 MovingBodySpeed;
     protected Vector2 RelativeVel;
     public bool isActive = true;
-    public bool Alive=true;
 
 
     //---------Прыжки
@@ -142,7 +140,8 @@ public abstract class Enemy_infantry : EnemyType
             rb.velocity = new Vector2(rb.velocity.x* 0.2f , rb.velocity.y); // останавливаемся
             if (NextTarget.isFinalTarget==true)
             {
-                eventmanager.TargetReached(gameObject);
+                eventmanager.CallOnTargetReached(_transform);
+                return;
             }
            
             int i = 0;
@@ -425,31 +424,9 @@ public abstract class Enemy_infantry : EnemyType
         }
     }
 
-    protected IEnumerator Die()
-    {
-        while (true)
-        {
-            if (Alive)
-            {
-                this.enabled = false;
-                Alive = false;
-                gameObject.tag = "Dead";
-                yield return new WaitForSeconds(DeadBodytime);
-            }
-            else
-            {
-                enemymanager.DestroyEnemy(_transform);
-                yield return null;
-            }
-        }
-    }
     
     //-------------------------------------------------------Weapons affect
-    public void ApplyDamage(int points)
-    {
-        //Debug.Log("ApplyDamage " + points);
-        Health -= points;
-    }
+
 
     public void SlowDown_message(int slow_effect_length)
     {

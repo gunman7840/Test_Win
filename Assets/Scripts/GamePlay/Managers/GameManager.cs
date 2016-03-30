@@ -3,33 +3,60 @@ using System.Collections;
 
 public class GameManager : MonoBehaviour {
 
-    public static GameManager instance = null;
-    //public GameObject Robot;
+    //public static GameManager instance = null;
 
-    //private BackGround boardScript;
+    private Camera _camera;
+    private UIManager uimanager;
+    private EventManager eventmanager;
+    private Score score;
+
+    //public int TargetRiched = 0;
+    public int HP;
+    public int WafesAll=0;
+    private int WafesPassed=0;
 
     void Awake()
     {
-        if (instance == null)
-            instance = this;
-        else if (instance != this)
-            Destroy(gameObject);
+        //Debug.Log(" Awake gamemanager ");
+        _camera = GameObject.Find("Main Camera").GetComponent<Camera>();
+        uimanager = GameObject.Find("UIManager").GetComponent<UIManager>();
+        eventmanager=_camera.GetComponent<EventManager>();
 
-
-        DontDestroyOnLoad(gameObject);
-      //  boardScript = GetComponent<BackGround>();
-        InitGame();
-         
-
+        uimanager.OnPress_Pause += PauseGame;
+        uimanager.OnPress_Resume += unPausegame;
+        EventManager.OnTargetReached += SubtractHealth;
+        eventmanager.OnSetwafes_start += SetWafes_start;
+        eventmanager.OnEncreaseWafe += EncreaseWafe;
 
     }
 
-    void InitGame()
+    void PauseGame()
     {
-        //boardScript.SetupScene();
-        //GameObject robot = Instantiate(Robot, new Vector3(-13f, -5f, 0f), Quaternion.identity) as GameObject;
-       
+        Time.timeScale = 0;
     }
 
-   
+    void unPausegame()
+    {
+        Time.timeScale = 1;
+    }
+
+    void SubtractHealth(Transform enemy_tr)
+    {
+        HP--;
+        if(HP == 0)
+        {
+            eventmanager.OnGameOver_meth();
+        }
+    }
+
+    public void SetWafes_start(int _wafes)
+    {
+        WafesAll += _wafes;
+    }
+
+    public void EncreaseWafe()
+    {
+        WafesPassed++;
+    }
+
 }

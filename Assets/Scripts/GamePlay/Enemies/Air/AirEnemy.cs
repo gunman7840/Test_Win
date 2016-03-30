@@ -11,7 +11,6 @@ public abstract class AirEnemy : EnemyType
 
     //public LayerMask myLayerMask;
     public float LinerVel;
-    protected float DeadBodytime = 100f;
     protected float BalanceTorque = 5f;
     //protected EnemyManager enemymanager;
 
@@ -78,7 +77,8 @@ public abstract class AirEnemy : EnemyType
             if (NextTarget.isFinalTarget == true)
             {
                 Debug.Log("reached ");
-                eventmanager.TargetReached(gameObject);
+                eventmanager.CallOnTargetReached(_transform);
+                return;
             }
             int i = 0;
             foreach (TargetPoint item in Trajectory.PointsList)
@@ -187,21 +187,21 @@ public abstract class AirEnemy : EnemyType
         }
     }
 
-    protected IEnumerator Die()
+    new protected IEnumerator Die()
     {
         //Debug.Log("start die");
+        eventmanager.CallOnDestroyEnemy_cost(cost);
         this.enabled = false;
         SettoSleep();
         gameObject.tag = "Dead";
         rb.gravityScale = 1f;
          
         yield return new WaitForSeconds(4f);
-
-        enemymanager.DestroyEnemy(_transform);
+        eventmanager.CallOnDestroyEnemy(_transform);
     }
 
     //-------------------------------------------------------Weapons affect
-    public void ApplyDamage(int points)
+    new public void ApplyDamage(int points)
     {
         Debug.Log("ApplyDamage " + points);
         Health -= points;

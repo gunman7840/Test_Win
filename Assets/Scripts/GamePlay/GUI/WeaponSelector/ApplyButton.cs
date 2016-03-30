@@ -13,7 +13,7 @@ public class ApplyButton : MonoBehaviour
     {
         gm = gameObject;
         uimanager = GameObject.Find("UIManager").GetComponent<UIManager>();
-        uimanager.OnPressWeaponButton += Appeare;
+        uimanager.OnPress_WButton += Appeare;
         uimanager.OnCloseGUI += Disappeare;
         gm.SetActive(false);
     }

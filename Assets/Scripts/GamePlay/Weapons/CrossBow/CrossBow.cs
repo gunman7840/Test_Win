@@ -6,9 +6,6 @@ class CrossBow : Missile_GunType
 {
     //private Transform missile;
 
-    void Awake()
-    {
-    }
 
     void OnSpawned()
     {

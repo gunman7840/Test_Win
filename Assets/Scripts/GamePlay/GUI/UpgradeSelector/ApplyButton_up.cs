@@ -13,7 +13,7 @@ public class ApplyButton_up : MonoBehaviour
     {
         gm = gameObject;
         uimanager = GameObject.Find("UIManager").GetComponent<UIManager>();
-        uimanager.OnPressUpgradeSelectorButton += Appeare;
+        uimanager.OnPress_UButton += Appeare;
         uimanager.OnCloseGUI += Disappeare;
         gm.SetActive(false);
     }

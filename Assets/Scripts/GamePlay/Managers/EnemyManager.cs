@@ -5,8 +5,8 @@ public class EnemyManager : MonoBehaviour {
 
     public LayerMask myLayerMask; //маска по которой будут делать рэйкасты все враги
     int Enemynumber = 0;
-    int TargetRiched = 0;
-    int enemiesdestroed = 0;
+
+    
 
     //public GameObject[] EnemyPrefabs;
     //Hashtable EnemyHT = new Hashtable();
@@ -15,22 +15,14 @@ public class EnemyManager : MonoBehaviour {
     // Use this for initialization
     void Awake () {
         //Debug.Log("enmey manager awake");
-        EventManager.OnTargetReached += GameOver; //Подписываемся на событие(Добавляем метод который будет исполнятся по этому событию)
-        //EventManager.DestroyEnemy_event += DestroyEnemy; 
+        EventManager.OnTargetReached += DespawnEnemy;
+        EventManager.OnDestroyEnemy += DespawnEnemy;
     }
 
-    void GameOver(GameObject enemy)
+    void DespawnEnemy(Transform enemy_tr)
     {
-        TargetRiched++;
-        PoolBoss.Despawn(enemy.transform);
+        PoolBoss.Despawn(enemy_tr);
     }
 
-    public void  DestroyEnemy(Transform _enemytransform)
-    {
-        enemiesdestroed++;
-        Debug.Log("--------------Destroy------------------------------number" + _enemytransform);
-        PoolBoss.Despawn(_enemytransform);
-    }
 
-   
 }
